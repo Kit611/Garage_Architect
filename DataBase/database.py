@@ -3,9 +3,6 @@ import sqlite3
 
 conn = sqlite3.connect('game.db')
 c = conn.cursor()
-pragma = 'PRAGMA foreign_keys=ON;'
-c.execute(pragma)
-conn.commit()
 
 drop_player='drop table if exists player'
 c.execute(drop_player)
@@ -21,6 +18,9 @@ c.execute(drop_playerpart)
 conn.commit()
 drop_carpart='drop table if exists car_parts'
 c.execute(drop_carpart)
+conn.commit()
+pragma = 'PRAGMA foreign_keys=ON;'
+c.execute(pragma)
 conn.commit()
 
 
@@ -57,43 +57,74 @@ def save_car(car,id_player):
     return id_car
 
 def save_parts(part):
-    string ='insert into parts(name,boost) values(?,?)'
-    c.execute(string,(part.name,part.boost))
+    string ='insert into parts(name,price,boost) values(?,?,?)'
+    c.execute(string,(part.name,part.price,part.boost))
     id_part=c.lastrowid
     conn.commit()
+    s='select * from parts where id_part=?'
+    c.execute(s,(id_part,))
+    print(c.fetchone())
     return id_part
 
 def save_partplayer(player_id,part_id):
     string ='insert into player_parts(player_id,part_id) values(?,?)'
     c.execute(string,(player_id,part_id))
-    id_part=c.lastrowid
+    id_partplayer=c.lastrowid
     conn.commit()
-    return id_part
+    return id_partplayer
 
 def save_partcar(car_id,part_id):
     string ='insert into car_parts(car_id,part_id) values(?,?)'
     c.execute(string,(car_id,part_id))
-    id_part=c.lastrowid
+    id_partcar=c.lastrowid
     conn.commit()
-    return id_part
+    s='select * from car_parts where car_id=?'
+    c.execute(s,(car_id,))
+    print(c.fetchone())
+    return id_partcar
 
-def load_player(name_player):
-    string='select * from player where name=?'
-    c.execute(string,name_player)
-    # name=c.fetchone()[0]
-    # money=c.fetchone()[1]
-    conn.commit()
-    # return name,money
+def load_player(id_player):
+    string='select * from player where id_player=?'
+    c.execute(string,(id_player,))
+    player=c.fetchone()
+    name=player[1]
+    money=player[2]
+    return name,money
 
-# def print_select():
-#     conn = sqlite3.connect('game.db')
-#     c = conn.cursor()
-#     st='select * from cars'
-#     c.execute(st)
-#     ss=c.fetchall()
-#     conn.commit()
-#     c.close()
-#     conn.close()
-#     return ss
-# c.close()
-# conn.close()
+def load_car(id_car):
+    string='select * from cars where id_car=?'
+    c.execute(string,(id_car,))
+    car=c.fetchone()
+    name=car[2]
+    power=car[3]
+    weight=car[4]
+    condition=car[5]
+    price=car[6]
+    return name,power,weight,condition,price
+
+def load_part(id_part):
+    string='select * from parts where id_part=?'
+    c.execute(string,(id_part,))
+    part=c.fetchone()
+    name=part[1]
+    price=part[2]
+    boost=part[3]
+    return name,price,boost
+
+def load_playerpart(id_player):
+    string='select * from player_parts where player_id=?'
+    c.execute(string,(id_player,))
+    part=c.fetchall()
+    part_id=[]
+    for p in range (len(part)):
+        part_id.append(part[p][2])
+    return part_id
+
+def load_carpart(id_car):
+    string='select * from car_parts where car_id=?'
+    c.execute(string,(id_car,))
+    part=c.fetchall()
+    part_id=[]
+    for p in range (len(part)):
+        part_id.append(part[p][2])
+    return part_id

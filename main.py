@@ -8,7 +8,7 @@ from Models.ShopPart.PartShop import ShopPart
 item_menu=0
 Alex=Player('Alex',150000)
 id_player=save_player(Alex.name_player,Alex.money)
-name,money=load_player('Alex')
+name,money=load_player(id_player)
 print(name,money)
 skyline=Car("Skyline",30000, 300,1100,70)
 mazda=Car("mazda",25000,120,1350,80)
@@ -66,6 +66,8 @@ while item_menu!=6:
                         print()
                         Alex.install(car_name, part_name)
                         id_carpart=save_partcar(id_car,id_part)
+                        carpart_id=load_carpart(id_car)
+                        print(carpart_id)
                     else:
                         print('У вас нет купленных деталей\n')
                 else:
@@ -107,6 +109,8 @@ while item_menu!=6:
         continue
     elif number==3:
         Alex.show_parts()
+        part_id=load_playerpart(id_player)
+        print(part_id)
         print()
         continue
     elif number==4:
@@ -122,6 +126,8 @@ while item_menu!=6:
                 car=shop_c.find_car(car_name)
                 Alex.buy_car(car)
                 id_car=save_car(car,id_player)
+                name_car,power,weight,condition,price=load_car(id_car)
+                print(name_car,power,weight,condition,price)
             else:
                 print('Tакого варианта нет')
     elif number == 5:
@@ -137,7 +143,9 @@ while item_menu!=6:
                 part=shop_p.find_part(part_name)
                 Alex.buy_part(part)
                 id_part=save_parts(part)
-                id_playerpart=id_playerpart(id_player,id_part)
+                id_playerpart=save_partplayer(id_player,id_part)
+                name_part,price_part,boost=load_part(id_part)
+                print(name_part,price_part,boost)
             else:
                 print('Tакого варианта нет')
     elif number==6:

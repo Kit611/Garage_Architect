@@ -27,7 +27,7 @@ class Player:
             if self.money >= part.price:
                 self.money-=part.price
                 self.bought_parts.append(part)
-                print('Деталь уже куплена\n')
+                print('Деталь успешно куплена\n')
             else:
                 print("У вас недостаточно средств\n")
         else:
