@@ -1,3 +1,4 @@
+from DataBase.database import *
 from Models.Player.player import Player
 from Models.ShopCar.CarShop import CarShop
 from Models.Car.car import Car
@@ -5,9 +6,10 @@ from Models.Parts.part import Part
 from Models.ShopPart.PartShop import ShopPart
 
 item_menu=0
-# name_player,money= save_player()
-# Alex=Player(name_player,money)
 Alex=Player('Alex',150000)
+id_player=save_player(Alex.name_player,Alex.money)
+name,money=load_player('Alex')
+print(name,money)
 skyline=Car("Skyline",30000, 300,1100,70)
 mazda=Car("mazda",25000,120,1350,80)
 turbo=Part("Turbina",30000,50)
@@ -63,6 +65,7 @@ while item_menu!=6:
                         part_name = input('Введите название детали: ')
                         print()
                         Alex.install(car_name, part_name)
+                        id_carpart=save_partcar(id_car,id_part)
                     else:
                         print('У вас нет купленных деталей\n')
                 else:
@@ -118,6 +121,7 @@ while item_menu!=6:
                 print()
                 car=shop_c.find_car(car_name)
                 Alex.buy_car(car)
+                id_car=save_car(car,id_player)
             else:
                 print('Tакого варианта нет')
     elif number == 5:
@@ -132,6 +136,8 @@ while item_menu!=6:
                 print()
                 part=shop_p.find_part(part_name)
                 Alex.buy_part(part)
+                id_part=save_parts(part)
+                id_playerpart=id_playerpart(id_player,id_part)
             else:
                 print('Tакого варианта нет')
     elif number==6:
