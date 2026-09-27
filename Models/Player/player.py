@@ -12,6 +12,9 @@ class Player:
     def add_car(self,car):
         self.list_cars.append(car)
 
+    def add_part(self,part):
+        self.bought_parts.append(part)
+
     def print_info(self):
         print(f"Имя: {self.name_player}\nБаланс: {self.money} Сoins\n")
 
@@ -26,7 +29,7 @@ class Player:
         elif part:
             if self.money >= part.price:
                 self.money-=part.price
-                self.bought_parts.append(part)
+                self.add_part(part)
                 print('Деталь успешно куплена\n')
             else:
                 print("У вас недостаточно средств\n")
