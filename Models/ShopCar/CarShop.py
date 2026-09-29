@@ -10,11 +10,11 @@ class CarShop:
     def show(self):
         for car in self.cars:
             print(f"Авто №{self.cars.index(car)+1}")
-            print(f"Название:{car.name}\nЦена: {car.price}\n")
+            print(f"Название:{car.name.capitalize()}\nЦена: {car.price}\n")
 
     def find_car(self,name):
         for car in self.cars:
-            if car.name == name:
+            if car.name.lower() == name.lower():
                 return car
         print("Такого автомобиля нет в продаже\n")
         return None

@@ -1,6 +1,5 @@
 #Название: скайлайн. Мощность: 300 л.с. Масса: 1,100. Состояние: 70/100
 #Ремотнироваться, показывать характеристики, получать повреждения
-from unittest import skipIf
 from Models.Parts.part import Part
 
 class Car:
@@ -13,13 +12,13 @@ class Car:
         self.parts=[]
 
     def print_characteristics(self):
-        print(f"Название: {self.name}\nЦена:{self.price} \nМощность: {self.power} \nВес: {self.weight} \nСостояние: {self.condition}/100")
+        print(f"Название: {self.name.capitalize()}\nЦена:{self.price} \nМощность: {self.power} \nВес: {self.weight} \nСостояние: {self.condition}/100")
         for part in self.parts:
-            print(f"Установленные детали:\n{part.name}\n")
+            print(f"Установленные детали:\n{part.name.capitalize()}\n")
 
     def show_parts(self):
         for part in self.parts:
-            print(f"Название: {part.name}\n")
+            print(f"Название: {part.name.capitalize()}\n")
 
     def repair(self):
         repair_points=100-self.condition
@@ -37,8 +36,10 @@ class Car:
             self.power+=part.boost
             part.installed=True
             part.installed_on=self
+            return 1
         else:
             print('Деталь уже установлена\n')
+            return 0
 
     def print_parts(self):
         for part in self.parts:

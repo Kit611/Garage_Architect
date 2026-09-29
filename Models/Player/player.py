@@ -16,7 +16,7 @@ class Player:
         self.bought_parts.append(part)
 
     def print_info(self):
-        print(f"Имя: {self.name_player}\nБаланс: {self.money} Сoins\n")
+        print(f"Имя: {self.name_player.capitalize()}\nБаланс: {self.money} Сoins\n")
 
     def buy_part(self,part):
         part_found = False
@@ -59,21 +59,22 @@ class Player:
         found_car=None
         found_part=None
         for car in self.list_cars:
-            if car.name == name_car:
+            if car.name.lower() == name_car.lower():
                 car_found=True
                 found_car=car
                 break
         for part in self.bought_parts:
-            if part.name == name:
+            if part.name.lower() == name.lower():
                 part_found=True
                 found_part=part
                 break
 
         if car_found and part_found:
-            found_car.install_part(found_part)
-            print('Деталь успешно установлена\n'
-                  f'Прирост мощности составил: +{found_part.boost}\n'
-                  f'Общая мощность автомобиля: {found_car.power}')
+            answer=found_car.install_part(found_part)
+            if answer==1:
+                print('Деталь успешно установлена\n'
+                      f'Прирост мощности составил: +{found_part.boost}\n'
+                      f'Общая мощность автомобиля: {found_car.power}')
         elif not car_found:
             print('У вас нет такого автомобиля\n')
         elif not part_found:
@@ -85,12 +86,12 @@ class Player:
         found_car = None
         found_part = None
         for car in self.list_cars:
-            if car.name == name_car:
+            if car.name.lower() == name_car.lower():
                 car_found = True
                 found_car = car
                 break
         for part in self.bought_parts:
-            if part.name == name:
+            if part.name.lower() == name.lower():
                 part_found = True
                 found_part = part
                 break
@@ -112,14 +113,14 @@ class Player:
         if self.list_cars:
             for car in self.list_cars:
                 print(f"Авто №{self.list_cars.index(car) + 1}")
-                print(f'Название: {car.name}')
+                print(f'Название: {car.name.capitalize()}')
                 print()
         else:
             print('Ваш список автомобилей пуст\n')
 
     def info_car(self,name):
         for car in self.list_cars:
-            if car.name == name:
+            if car.name.lower() == name.lower():
                 car.print_characteristics()
 
     def show_parts(self):
@@ -127,7 +128,7 @@ class Player:
         if self.bought_parts:
             for part in self.bought_parts:
                 print(f"Деталь №{self.bought_parts.index(part) + 1}")
-                print(f'Название: {part.name}\n'
+                print(f'Название: {part.name.capitalize()}\n'
                       f'Мощность: {part.boost}')
                 print()
         else:
@@ -137,7 +138,7 @@ class Player:
         part_found=False
         found_part = None
         for part in self.bought_parts:
-            if part.name == name:
+            if part.name.lower() == name.lower():
                 part_found=True
                 found_part = part
                 break
@@ -154,7 +155,7 @@ class Player:
         car_found=False
         found_car = None
         for car in self.list_cars:
-            if car.name == name_car:
+            if car.name.lower() == name_car.lower():
                 car_found = True
                 found_car = car
                 break
@@ -178,7 +179,7 @@ class Player:
         car_found=False
         found_car = None
         for car in self.list_cars:
-            if car.name == name_car:
+            if car.name.lower() == name_car.lower():
                 car_found = True
                 found_car = car
                 break

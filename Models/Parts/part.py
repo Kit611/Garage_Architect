@@ -11,7 +11,7 @@ class Part:
 
     def print_characteristics(self):
         if self.installed:
-            print(f"Название: {self.name}\nЦена: {self.price}\nПрибавка к мощности: {self.boost}\nУстановлен: Да\nУстановлен на:{self.installed_on.name}\n")
+            print(f"Название: {self.name.capitalize()}\nЦена: {self.price}\nПрибавка к мощности: {self.boost}\nУстановлен: Да\nУстановлен на:{self.installed_on.name.capitalize()}\n")
         elif not self.installed:
             print(
-                f"Название: {self.name}\nЦена: {self.price}\nПрибавка к мощности: {self.boost}\nУстановлен: Нет\n")
+                f"Название: {self.name.capitalize()}\nЦена: {self.price}\nПрибавка к мощности: {self.boost}\nУстановлен: Нет\n")
