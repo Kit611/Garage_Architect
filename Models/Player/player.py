@@ -118,10 +118,12 @@ class Player:
         else:
             print('Ваш список автомобилей пуст\n')
 
-    def info_car(self,name):
+    def info_car(self, name):
         for car in self.list_cars:
             if car.name.lower() == name.lower():
                 car.print_characteristics()
+                return
+        print('У вас нет такого автомобиля\n')
 
     def show_parts(self):
         print("Мои детали:\n")

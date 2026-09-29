@@ -12,9 +12,8 @@ class CarShop:
             print(f"Авто №{self.cars.index(car)+1}")
             print(f"Название:{car.name.capitalize()}\nЦена: {car.price}\n")
 
-    def find_car(self,name):
+    def find_car(self, name):
         for car in self.cars:
             if car.name.lower() == name.lower():
                 return car
-        print("Такого автомобиля нет в продаже\n")
-        return None
+        raise ValueError('Такого автомобиля нет в продаже')

@@ -16,5 +16,4 @@ class ShopPart:
         for part in self.parts:
             if part.name.lower() == name.lower():
                 return part
-        print('Такой детали нет\n')
-        return None
+        raise ValueError('Такой детали нет в продаже')
