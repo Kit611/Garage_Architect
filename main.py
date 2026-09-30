@@ -19,9 +19,8 @@ def load_game(player_name):
         alex.add_part(part)
 
     for id_car in find_playercar(id_player):
-        name_car, price, power, weight, condition = load_car(id_car)
-        car = Car(name_car, price, power, weight, condition)
-
+        car_id,name_car, price, power, weight, condition = load_car(id_car)
+        car = Car(name_car, price, power, weight, condition,id_car)
         for id_part in load_carpart(id_car):
             part = parts_by_id.get(id_part)
             if part is None:
@@ -37,13 +36,16 @@ def load_game(player_name):
 
 
 def safe_int_input(prompt):
-    """Запрашивает число, пока пользователь не введёт корректное значение."""
     while True:
         try:
             return int(input(prompt))
         except ValueError:
             print('Пожалуйста, введите число\n')
 
+def save_game(id_player, alex):
+    change_player(id_player, alex)
+    for car in alex.list_cars:
+        update_car(car)
 
 mode = 0
 while mode != 3:
@@ -168,7 +170,7 @@ while mode != 3:
                                 print(f'Автомобиль не найден: {e}\n')
                         else:
                             print('У вас нет автомобилей\n')
-                    else:
+                    elif garage_menu != 6:
                         print('Такого варианта нет')
                 continue
             elif number == 3:
@@ -187,8 +189,9 @@ while mode != 3:
                         print()
                         try:
                             car = shop_c.find_car(car_name)
-                            alex.buy_car(car)
-                            id_car = save_car(car, id_player)
+                            anwser=alex.buy_car(car)
+                            if anwser:
+                                id_car = save_car(car, id_player)
                         except (ValueError, AttributeError) as e:
                             print(f'Не удалось купить автомобиль: {e}\n')
                     else:
@@ -205,15 +208,17 @@ while mode != 3:
                         print()
                         try:
                             part = shop_p.find_part(part_name)
-                            alex.buy_part(part)
-                            id_part = save_parts(part)
-                            id_playerpart = save_partplayer(id_player, id_part)
+                            anwser=alex.buy_part(part)
+                            if anwser:
+                                id_part = save_parts(part)
+                                id_playerpart = save_partplayer(id_player, id_part)
                         except (ValueError, AttributeError) as e:
                             print(f'Не удалось купить деталь: {e}\n')
                     else:
                         print('Такого варианта нет')
             elif number == 6:
                 item_menu = number
+                save_game(id_player, alex)
                 continue
 
     elif mode == 2:
@@ -336,7 +341,7 @@ while mode != 3:
                                 print(f'Автомобиль не найден: {e}\n')
                         else:
                             print('У вас нет автомобилей\n')
-                    else:
+                    elif garage_menu!=6:
                         print('Такого варианта нет')
                 continue
             elif number == 3:
@@ -382,6 +387,7 @@ while mode != 3:
                         print('Такого варианта нет')
             elif number == 6:
                 item_menu = number
+                save_game(id_player, alex)
                 continue
 
     elif mode != 3:

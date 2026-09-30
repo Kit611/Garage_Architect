@@ -122,12 +122,13 @@ def load_car(id_car):
     c.execute(string,(id_car,))
     car=c.fetchone()
     if car is not None:
+        car_id=car[0]
         name=car[2]
         power=car[3]
         weight=car[4]
         condition=car[5]
         price=car[6]
-        return name,price,power,weight,condition
+        return car_id,name,price,power,weight,condition
     else:
         raise ValueError(f'Автомобиль с id: {id_car} не найдена')
 
@@ -169,3 +170,23 @@ def find_playercar(id_player):
     c.execute(string,(id_player,))
     rows=c.fetchall()
     return [row[0] for row in rows]
+
+def change_player(id_player,alex):
+    try:
+        string='update player set name=?,money=? where id_player=?'
+        c.execute(string,(alex.name_player,alex.money,id_player))
+        conn.commit()
+    except sqlite3.IntegrityError as e:
+        conn.rollback()
+        print(f'Ошибка обновления денег: {e}')
+        return None
+
+def update_car(car):
+    try:
+        string='update cars set name=? ,power=? ,weight=? ,condition=? ,price=? where id_car=?'
+        c.execute(string,(car.name,car.power,car.weight,car.condition,car.price,car.id_car))
+        conn.commit()
+    except sqlite3.IntegrityError as e:
+        conn.rollback()
+        print(f'Ошибка обновления автомобиля {e}')
+        return None

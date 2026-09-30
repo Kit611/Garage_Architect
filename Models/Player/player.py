@@ -26,15 +26,19 @@ class Player:
                 break
         if part_found:
             print('Деталь уже куплена\n')
+            return False
         elif part:
             if self.money >= part.price:
                 self.money-=part.price
                 self.add_part(part)
                 print('Деталь успешно куплена\n')
+                return True
             else:
                 print("У вас недостаточно средств\n")
+                return False
         else:
             print('Такой детали нет\n')
+            return False
 
     def buy_car(self,car):
         car_found=False
@@ -43,14 +47,17 @@ class Player:
                 car_found=True
                 break
         if car_found:
-            print('Автомобиль уже куплеn\n')
+            print('Автомобиль уже куплен\n')
+            return False
         elif car:
             if self.money >= car.price:
                 self.money-=car.price
                 self.add_car(car)
                 print('Автомобиль успешно куплен\n')
+                return True
             else:
                 print('Недостаточно средств\n')
+                return False
 
 
     def install(self,name_car,name):

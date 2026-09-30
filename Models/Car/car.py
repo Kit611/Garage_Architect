@@ -3,7 +3,8 @@
 from Models.Parts.part import Part
 
 class Car:
-    def __init__(self,name,price,power,weight,condition):
+    def __init__(self,name,price,power,weight,condition,id_car=None):
+        self.id_car=id_car
         self.name=name
         self.price=price
         self.power=power
