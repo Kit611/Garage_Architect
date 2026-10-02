@@ -136,10 +136,11 @@ class Player:
         print("Мои детали:\n")
         if self.bought_parts:
             for part in self.bought_parts:
-                print(f"Деталь №{self.bought_parts.index(part) + 1}")
-                print(f'Название: {part.name.capitalize()}\n'
-                      f'Мощность: {part.boost}')
-                print()
+                if not part.installed:
+                    print(f"Деталь №{self.bought_parts.index(part) + 1}")
+                    print(f'Название: {part.name.capitalize()}\n'
+                          f'Мощность: {part.boost}')
+                    print()
         else:
             print('Ваш список деталей пуст\n')
 

@@ -58,10 +58,10 @@ def save_parts(part):
         string ='insert into parts(name,price,boost) values(?,?,?)'
         c.execute(string,(part.name,part.price,part.boost))
         id_part=c.lastrowid
+        part.id_part=id_part
         conn.commit()
         s='select * from parts where id_part=?'
         c.execute(s,(id_part,))
-        print(c.fetchone())
         return id_part
     except sqlite3.IntegrityError as e:
         conn.rollback()
@@ -189,4 +189,27 @@ def update_car(car):
     except sqlite3.IntegrityError as e:
         conn.rollback()
         print(f'Ошибка обновления автомобиля {e}')
+        return None
+
+def delete_part(id_car,id_part):
+    try:
+        string='delete from car_parts where car_id=? and part_id=?'
+        c.execute(string,(id_car,id_part))
+        conn.commit()
+    except sqlite3.IntegrityError as e:
+        conn.rollback()
+        print(f'Ошибка удаления детали с автомобиля {e}')
+        return None
+
+def find_car_part(id_car,id_part):
+    try:
+        string='select * from car_parts where car_id=? and part_id=?'
+        c.execute(string,(id_car,id_part))
+        if c.fetchone() is None:
+            return False
+        else:
+            return True
+    except sqlite3.IntegrityError as e:
+        conn.rollback()
+        print(f'Нет установленных деталей {e}')
         return None

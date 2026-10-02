@@ -19,7 +19,8 @@ class Car:
 
     def show_parts(self):
         for part in self.parts:
-            print(f"Название: {part.name.capitalize()}\n")
+            if part.installed:
+                print(f"Название: {part.name.capitalize()}\n")
 
     def repair(self):
         repair_points=100-self.condition
@@ -41,10 +42,6 @@ class Car:
         else:
             print('Деталь уже установлена\n')
             return 0
-
-    def print_parts(self):
-        for part in self.parts:
-            print(part.name)
 
     def count_pricepart(self):
         count_price=0
