@@ -26,6 +26,7 @@ conn.commit()
 carpart_tb='create table if not exists car_parts(id integer primary key autoincrement,car_id integer references cars(id_car), part_id integer references parts(id_part))'
 c.execute(carpart_tb)
 conn.commit()
+# carshop_tb='creaate table if not exists car_shop('
 
 
 
@@ -183,8 +184,8 @@ def change_player(id_player,alex):
 
 def update_car(car):
     try:
-        string='update cars set name=? ,power=? ,weight=? ,condition=? ,price=? where id_car=?'
-        c.execute(string,(car.name,car.power,car.weight,car.condition,car.price,car.id_car))
+        string='update cars set name=? ,weight=? ,condition=? ,price=? where id_car=?'
+        c.execute(string,(car.name,car.weight,car.condition,car.price,car.id_car))
         conn.commit()
     except sqlite3.IntegrityError as e:
         conn.rollback()

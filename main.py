@@ -27,8 +27,8 @@ def load_game(player_name):
                 part_id, name_part, price_part, boost = load_part(id_part)
                 part = Part(name_part, price_part, boost,part_id)
             car.install_part(part)
-            if part in alex.bought_parts:
-                alex.bought_parts.remove(part)
+            # if part in alex.bought_parts:
+            #     alex.bought_parts.remove(part)
 
         alex.add_car(car)
 
@@ -50,12 +50,11 @@ def save_game(id_player, alex):
     for p in alex.bought_parts:
         if not p.installed:
             list_part.append(p.id_part)
-    for rp in range(len(list_part)):
-        anwser=find_car_part(1,list_part[rp])
-        if anwser:
-            delete_part(1, list_part[rp])
-        else:
-            print('Не успешно')
+    for c in alex.list_cars:
+        for rp in range(len(list_part)):
+            anwser=find_car_part(c.id_car,list_part[rp])
+            if anwser:
+                delete_part(c.id_car, list_part[rp])
 
 mode = 0
 while mode != 3:
@@ -310,8 +309,6 @@ while mode != 3:
                         if alex.list_cars:
                             car_name = input('Введите название автомобиля: ').lower()
                             print()
-                            for part in alex.bought_parts:
-                                part.print_characteristics()
                             print('Установленные детали: \n')
                             found = False
                             for car in alex.list_cars:
@@ -323,8 +320,6 @@ while mode != 3:
                                         print()
                                         try:
                                             alex.remove(car_name, part_name)
-                                            for part in alex.bought_parts:
-                                                part.print_characteristics()
                                         except (ValueError, AttributeError) as e:
                                             print(f'Не удалось снять деталь: {e}\n')
                                     else:
@@ -403,6 +398,5 @@ while mode != 3:
                 item_menu = number
                 save_game(id_player, alex)
                 continue
-
     elif mode != 3:
         print('Такого варианта нет\n')
