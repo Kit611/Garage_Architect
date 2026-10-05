@@ -18,6 +18,7 @@ def load_game(player_name):
         parts_by_id[id_part] = part
         alex.add_part(part)
 
+    print(find_playercar(id_player))
     for id_car in find_playercar(id_player):
         car_id,name_car, price, power, weight, condition = load_car(id_car)
         car = Car(name_car, price, power, weight, condition,id_car)
@@ -43,7 +44,7 @@ def safe_int_input(prompt):
             print('Пожалуйста, введите число\n')
 
 def save_game(id_player, alex):
-    change_player(id_player, alex)
+    update_player(id_player, alex)
     for car in alex.list_cars:
         update_car(car)
     list_part=[]
@@ -126,8 +127,10 @@ while mode != 3:
                                 part_name = input('Введите название детали: ').lower()
                                 print()
                                 try:
+                                    car_id=alex.car_find(car_name)
+                                    part_id=alex.part_find(part_name)
                                     alex.install(car_name, part_name)
-                                    id_carpart = save_partcar(car_name, part_name)
+                                    id_carpart = save_partcar(car_id, part_id)
                                 except (ValueError, AttributeError) as e:
                                     print(f'Не удалось установить деталь: {e}\n')
                             else:
@@ -297,8 +300,10 @@ while mode != 3:
                                 part_name = input('Введите название детали: ').lower()
                                 print()
                                 try:
+                                    car_id = alex.car_find(car_name)
+                                    part_id = alex.part_find(part_name)
                                     alex.install(car_name, part_name)
-                                    id_carpart = save_partcar(car_name, part_name)
+                                    id_carpart = save_partcar(car_id, part_id)
                                 except (ValueError, AttributeError) as e:
                                     print(f'Не удалось установить деталь: {e}\n')
                             else:

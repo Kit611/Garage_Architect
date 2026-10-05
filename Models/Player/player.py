@@ -136,7 +136,6 @@ class Player:
         print("Мои детали:\n")
         if self.bought_parts:
             for part in self.bought_parts:
-                # if not part.installed:
                 print(f"Деталь №{self.bought_parts.index(part) + 1}")
                 print(f'Название: {part.name.capitalize()}\n'
                           f'Мощность: {part.boost}')
@@ -200,3 +199,15 @@ class Player:
                 print('Состояние автомобиля уже 0\n')
         else:
             print('У вас нет такого автомобиля\n')
+
+    def car_find(self,name):
+        for car in self.list_cars:
+            if car.name.lower() == name.lower():
+                return car.id_car
+        raise ValueError('Автомобиль не найден\n')
+
+    def part_find(self,name):
+        for part in self.bought_parts:
+            if part.name.lower() == name.lower():
+                return part.id_part
+        raise ValueError('Деталь не найдена\n')
