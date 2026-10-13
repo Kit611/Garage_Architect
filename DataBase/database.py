@@ -11,7 +11,7 @@ c.execute(pragma)
 conn.commit()
 
 
-player_tb='CREATE TABLE IF NOT EXISTS player(id_player integer primary key autoincrement ,name text,money real check(money>=0))'
+player_tb='CREATE TABLE IF NOT EXISTS player(id_player integer primary key autoincrement ,name text collate nocase UNIQUE,money real check(money>=0))'
 c.execute(player_tb)
 conn.commit()
 car_tb='create table if not exists cars(id_car integer primary key autoincrement,player_id integer references player(id_player) on delete cascade,name text,power integer check(power>0),weight integer check(weight>0), condition integer check(condition>=0),price real check(price>=0))'
@@ -30,11 +30,18 @@ conn.commit()
 
 def save_player(name,money):
     try:
-        string='INSERT INTO player(name,money) VALUES(?,?)'
-        c.execute(string,(name,money))
-        player_id=c.lastrowid
-        conn.commit()
-        return player_id
+        s = 'select * from player where lower(name)=lower(?)'
+        c.execute(s, (name,))
+        row=c.fetchone()
+        if not row:
+            string='INSERT INTO player(name,money) VALUES(?,?)'
+            c.execute(string,(name,money))
+            player_id=c.lastrowid
+            conn.commit()
+            return player_id
+        else:
+            print('Игрок с таким именем уже существует')
+            return None
     except sqlite3.IntegrityError as e:
         conn.rollback()
         print(f'Ошибка сохранения игрока: {e}')
@@ -47,7 +54,6 @@ def save_car(car,id_player):
         id_car=c.lastrowid
         car.id_car=id_car
         conn.commit()
-        return id_car
     except sqlite3.IntegrityError as e:
         conn.rollback()
         print(f'Ошибка сохранения автомобиля: {e}')
@@ -74,9 +80,7 @@ def save_partplayer(player_id,part_id):
         if row is None:
             string ='insert into player_parts(player_id,part_id) values(?,?)'
             c.execute(string,(player_id,part_id))
-            id_partplayer=c.lastrowid
             conn.commit()
-            return id_partplayer
     except sqlite3.IntegrityError as e:
         conn.rollback()
         print(f'Ошибка сохранения деталей игрока: {e}')
@@ -88,9 +92,7 @@ def save_partcar(car_id,part_id):
         if not answer:
             string ='insert into car_parts(car_id,part_id) values(?,?)'
             c.execute(string,(car_id,part_id))
-            id_partcar=c.lastrowid
             conn.commit()
-            return id_partcar
     except sqlite3.IntegrityError as e:
         conn.rollback()
         print(f'Ошибка сохранения деталей автомобиля: {e}')

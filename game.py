@@ -1,5 +1,22 @@
 from Models.Player.player import   Player
-from DataBase.database import  *
+from DataBase.database import (
+    save_player,
+    find_playercar,
+    find_car_part,
+    delete_part,
+    update_car,
+    load_part,
+    load_carpart,
+    load_car,
+    load_playerpart,
+    load_player,
+    find_idplayer,
+    save_partplayer,
+    save_partcar,
+    save_parts,
+    save_car,
+    update_player,
+)
 from Models.Parts.part import Part
 from Models.Car.car import Car
 from Models.ShopCar.CarShop import CarShop
@@ -30,10 +47,10 @@ class Game:
             if not p.installed:
                 list_part.append(p.id_part)
         for c in self.player.list_cars:
-            for rp in range(len(list_part)):
-                anwser = find_car_part(c.id_car, list_part[rp])
+            for id in list_part:
+                anwser = find_car_part(c.id_car, id)
                 if anwser:
-                    delete_part(c.id_car, list_part[rp])
+                    delete_part(c.id_car,id)
 
     def load_game(self,player_name):
         self.id_player = find_idplayer(player_name)
@@ -67,13 +84,19 @@ class Game:
         return mode
 
     def new_game(self):
-        self.player = Player('Alex', 150000)
-        id_player = save_player(self.player.name_player,self.player.money)
-        if id_player:
-            self.id_player = id_player
-            return True
+        name=input('Введите имя вашего персонажа: ').strip()
+        print()
+        if name:
+            self.player = Player(name, 150000)
+            id_player = save_player(self.player.name_player,self.player.money)
+            if id_player:
+                self.id_player = id_player
+                return True
+            else:
+                print('Ошибка создания игрока\n')
+                return False
         else:
-            print('Ошибка создания игрока\n')
+            print('Недопустимое имя\n')
             return False
 
     def setup_shop(self):
@@ -153,7 +176,7 @@ class Game:
                             car_id = self.player.car_find(car_name)
                             part_id = self.player.part_find(part_name)
                             self.player.install(car_name, part_name)
-                            id_carpart = save_partcar(car_id, part_id)
+                            save_partcar(car_id, part_id)
                         except (ValueError, AttributeError) as e:
                             print(f'Не удалось установить деталь: {e}\n')
                     else:
@@ -220,9 +243,10 @@ class Game:
                 print()
                 try:
                     car = self.car_shop.find_car(car_name)
-                    anwser = self.player.buy_car(car)
+                    copy_car=Car(car.name,car.price,car.power,car.weight,car.condition)
+                    anwser = self.player.buy_car(copy_car)
                     if anwser:
-                        id_car = save_car(car, self.id_player)
+                        save_car(copy_car, self.id_player)
                 except (ValueError, AttributeError) as e:
                     print(f'Не удалось купить автомобиль: {e}\n')
             elif shop_menu!=2:
@@ -240,10 +264,11 @@ class Game:
                 print()
                 try:
                     part = self.part_shop.find_part(part_name)
-                    anwser = self.player.buy_part(part)
+                    copy_part=Part(part.name,part.price,part.boost)
+                    anwser = self.player.buy_part(copy_part)
                     if anwser:
-                        id_part = save_parts(part)
-                        id_playerpart = save_partplayer(self.id_player, id_part)
+                        id_part = save_parts(copy_part)
+                        save_partplayer(self.id_player, id_part)
                 except (ValueError, AttributeError) as e:
                     print(f'Не удалось купить деталь: {e}\n')
             elif shop_menu != 2:
@@ -259,10 +284,10 @@ class Game:
                 name = input('Введите имя игрока: ')
                 try:
                     self.load_game(name.lower())
-                    self.game_loop()
                 except (ValueError, AttributeError) as e:
                     print(f'Не удалось загрузить игру: {e}\n')
                     continue
+                self.game_loop()
             elif mode==3:
                 print('Выход')
                 break
