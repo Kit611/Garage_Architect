@@ -2,7 +2,6 @@ from Models.Player.player import   Player
 from DataBase.database import (
     save_player,
     find_playercar,
-    find_car_part,
     delete_part,
     update_car,
     load_part,
@@ -11,7 +10,6 @@ from DataBase.database import (
     load_playerpart,
     load_player,
     find_idplayer,
-    save_partplayer,
     save_partcar,
     save_parts,
     save_car,
@@ -31,7 +29,8 @@ class Game:
         self.part_shop=ShopPart()
         self.setup_shop()
 
-    def safe_int_input(self,prompt):
+    @staticmethod
+    def safe_int_input(prompt):
         while True:
             try:
                 return int(input(prompt))
@@ -42,15 +41,6 @@ class Game:
         update_player(self.id_player, self.player)
         for car in self.player.list_cars:
             update_car(car)
-        list_part = []
-        for p in self.player.bought_parts:
-            if not p.installed:
-                list_part.append(p.id_part)
-        for c in self.player.list_cars:
-            for id in list_part:
-                anwser = find_car_part(c.id_car, id)
-                if anwser:
-                    delete_part(c.id_car,id)
 
     def load_game(self,player_name):
         self.id_player = find_idplayer(player_name)
@@ -92,9 +82,7 @@ class Game:
             if id_player:
                 self.id_player = id_player
                 return True
-            else:
-                print('Ошибка создания игрока\n')
-                return False
+            return False
         else:
             print('Недопустимое имя\n')
             return False
@@ -156,10 +144,12 @@ class Game:
             print()
             if garage_menu == 1:
                 if self.player.list_cars:
-                    car_name = input('Введите название автомобиля: ').lower()
+                    number_car =self.safe_int_input('Введите номер автомобиля: ')
                     print()
                     try:
-                        self.player.repair_car(car_name)
+                        car=self.player.find_car(number_car)
+                        self.player.repair_car(car)
+                        self.save_game()
                     except (ValueError, AttributeError) as e:
                         print(f'Автомобиль не найден: {e}\n')
                 else:
@@ -167,16 +157,18 @@ class Game:
             elif garage_menu == 2:
                 if self.player.list_cars:
                     if self.player.bought_parts:
-                        car_name = input('Введите название автомобиля: ').lower()
+                        number_car = self.safe_int_input('Введите номер автомобиля: ')
                         print()
                         self.player.show_parts()
-                        part_name = input('Введите название детали: ').lower()
+                        part_number = self.safe_int_input('Введите номер детали: ')
                         print()
                         try:
-                            car_id = self.player.car_find(car_name)
-                            part_id = self.player.part_find(part_name)
-                            self.player.install(car_name, part_name)
-                            save_partcar(car_id, part_id)
+                            car=self.player.find_car(number_car)
+                            part=self.player.find_part(part_number)
+                            result = self.player.install(car, part)
+                            if result:
+                                installed_car, installed_part = result
+                                save_partcar(installed_car.id_car, installed_part.id_part)
                         except (ValueError, AttributeError) as e:
                             print(f'Не удалось установить деталь: {e}\n')
                     else:
@@ -184,46 +176,51 @@ class Game:
                 else:
                     print('У вас нет автомобилей\n')
             elif garage_menu == 3:
-                if self.player.list_cars:
-                    car_name = input('Введите название автомобиля: ').lower()
-                    print()
-                    print('Установленные детали: \n')
-                    found = False
-                    for car in self.player.list_cars:
-                        if car.name.lower() == car_name:
-                            found = True
+                try:
+                    if self.player.list_cars:
+                        number_car = self.safe_int_input('Введите номер автомобиля: ')
+                        print()
+                        print('Установленные детали: \n')
+                        if number_car:
+                            car=self.player.find_car(number_car)
                             if car.parts:
                                 car.show_parts()
-                                part_name = input('Введите название детали: ').lower()
+                                number_part = self.safe_int_input('Введите номер детали: ')
                                 print()
-                                try:
-                                    self.player.remove(car_name, part_name)
-                                except (ValueError, AttributeError) as e:
-                                    print(f'Не удалось снять деталь: {e}\n')
+                                part=self.player.find_part(number_part)
+                                result = self.player.remove(car, part)
+                                if result:
+                                    removed_car, removed_part = result
+                                    delete_part(removed_car.id_car, removed_part.id_part)
                             else:
                                 print('На вашем автомобиле нет установленных деталей\n')
-                    if not found:
-                        print(f'Автомобиль "{car_name}" не найден\n')
-                else:
-                    print('У вас нет автомобилей\n')
+                        else:
+                            print(f'Автомобиль с номером "{number_car}" не найден\n')
+                    else:
+                        print('У вас нет автомобилей\n')
+                except (ValueError, AttributeError) as e:
+                    print(f'Не удалось снять деталь: {e}\n')
             elif garage_menu == 4:
                 if self.player.list_cars:
-                    car_name = input('Введите название автомобиля: ').lower()
+                    number_car = self.safe_int_input('Введите номер автомобиля: ')
                     print()
                     try:
-                        self.player.info_car(car_name)
+                        car=self.player.find_car(number_car)
+                        car.print_characteristics()
                     except (ValueError, AttributeError) as e:
                         print(f'Автомобиль не найден: {e}\n')
                 else:
                     print('У вас нет автомобилей\n')
             elif garage_menu == 5:
                 if self.player.list_cars:
-                    car_name = input('Введите название автомобиля: ').lower()
+                    number_car = self.safe_int_input('Введите номер автомобиля: ')
                     print()
                     points = self.safe_int_input('Введите количество очков повреждения: ')
                     print()
                     try:
-                        self.player.damage_car(car_name, points)
+                        car=self.player.find_car(number_car)
+                        self.player.damage_car(car, points)
+                        self.save_game()
                     except (ValueError, AttributeError) as e:
                         print(f'Автомобиль не найден: {e}\n')
                 else:
@@ -244,9 +241,18 @@ class Game:
                 try:
                     car = self.car_shop.find_car(car_name)
                     copy_car=Car(car.name,car.price,car.power,car.weight,car.condition)
-                    anwser = self.player.buy_car(copy_car)
-                    if anwser:
-                        save_car(copy_car, self.id_player)
+                    if self.player.money>=copy_car.price:
+                        answer=save_car(copy_car, self.id_player)
+                        if answer:
+                            answer1=self.player.buy_car(copy_car)
+                            if answer1:
+                                self.save_game()
+                            else:
+                                print('Не удалось купить автомобиль\n')
+                        else:
+                            print('Не удалось сохранить покупку автомобиля\n')
+                    else:
+                        print('У вас недостаточно средств\n')
                 except (ValueError, AttributeError) as e:
                     print(f'Не удалось купить автомобиль: {e}\n')
             elif shop_menu!=2:
@@ -265,10 +271,18 @@ class Game:
                 try:
                     part = self.part_shop.find_part(part_name)
                     copy_part=Part(part.name,part.price,part.boost)
-                    anwser = self.player.buy_part(copy_part)
-                    if anwser:
-                        id_part = save_parts(copy_part)
-                        save_partplayer(self.id_player, id_part)
+                    if self.player.money>=copy_part.price:
+                        answer = save_parts(copy_part,self.id_player)
+                        if answer:
+                            answer1 = self.player.buy_part(copy_part)
+                            if answer1:
+                                self.save_game()
+                            else:
+                                print('Не удалось купить деталь\n')
+                        else:
+                            print('Не удалось сохранить покупку детали\n')
+                    else:
+                        print('У вас недостаточно средств\n')
                 except (ValueError, AttributeError) as e:
                     print(f'Не удалось купить деталь: {e}\n')
             elif shop_menu != 2:

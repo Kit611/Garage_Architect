@@ -5,6 +5,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.path.join(BASE_DIR, '..', 'DataBase', 'game.db')
 
 conn = sqlite3.connect(DB_PATH)
+conn.create_function('lower', 1, lambda s: s.lower() if isinstance(s, str) else s, deterministic=True)
 c = conn.cursor()
 pragma = 'PRAGMA foreign_keys=ON;'
 c.execute(pragma)
@@ -54,37 +55,45 @@ def save_car(car,id_player):
         id_car=c.lastrowid
         car.id_car=id_car
         conn.commit()
+        return True
     except sqlite3.IntegrityError as e:
         conn.rollback()
         print(f'Ошибка сохранения автомобиля: {e}')
-        return None
+        return False
 
-def save_parts(part):
+def save_parts(part,player_id):
     try:
         string ='insert into parts(name,price,boost) values(?,?,?)'
         c.execute(string,(part.name,part.price,part.boost))
         id_part=c.lastrowid
         part.id_part=id_part
+        s = 'select * from player_parts where player_id=? and part_id=?'
+        c.execute(s, (player_id, id_part))
+        row = c.fetchone()
+        if row is None:
+            string = 'insert into player_parts(player_id,part_id) values(?,?)'
+            c.execute(string, (player_id, id_part))
         conn.commit()
-        return id_part
+        return True
     except sqlite3.IntegrityError as e:
         conn.rollback()
         print(f'Ошибка сохранения деталей: {e}')
         return None
 
-def save_partplayer(player_id,part_id):
-    try:
-        s='select * from player_parts where player_id=? and part_id=?'
-        c.execute(s,(player_id,part_id))
-        row=c.fetchone()
-        if row is None:
-            string ='insert into player_parts(player_id,part_id) values(?,?)'
-            c.execute(string,(player_id,part_id))
-            conn.commit()
-    except sqlite3.IntegrityError as e:
-        conn.rollback()
-        print(f'Ошибка сохранения деталей игрока: {e}')
-        return None
+# def save_partplayer(player_id,part_id):
+#     try:
+#         s='select * from player_parts where player_id=? and part_id=?'
+#         c.execute(s,(player_id,part_id))
+#         row=c.fetchone()
+#         if row is None:
+#             string ='insert into player_parts(player_id,part_id) values(?,?)'
+#             c.execute(string,(player_id,part_id))
+#             conn.commit()
+#         return True
+#     except sqlite3.IntegrityError as e:
+#         conn.rollback()
+#         print(f'Ошибка сохранения деталей игрока: {e}')
+#         return False
 
 def save_partcar(car_id,part_id):
     try:

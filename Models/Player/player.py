@@ -28,14 +28,10 @@ class Player:
             print('Деталь уже куплена\n')
             return False
         elif part:
-            if self.money >= part.price:
-                self.money-=part.price
-                self.add_part(part)
-                print('Деталь успешно куплена\n')
-                return True
-            else:
-                print("У вас недостаточно средств\n")
-                return False
+            self.money-=part.price
+            self.add_part(part)
+            print('Деталь успешно куплена\n')
+            return True
         else:
             print('Такой детали нет\n')
             return False
@@ -50,96 +46,60 @@ class Player:
             print('Автомобиль уже куплен\n')
             return False
         elif car:
-            if self.money >= car.price:
-                self.money-=car.price
-                self.add_car(car)
-                print('Автомобиль успешно куплен\n')
-                return True
-            else:
-                print('Недостаточно средств\n')
-                return False
+            self.money-=car.price
+            self.add_car(car)
+            print('Автомобиль успешно куплен\n')
+            return True
+        else:
+            print('Такой детали нет\n')
+            return False
 
+    def install(self, car, part):
+        if car.install_part(part) == 1:
+            print('Деталь успешно установлена\n'
+                  f'Прирост мощности составил: +{part.boost}\n'
+                  f'Общая мощность автомобиля: {car.power}\n')
+            return car, part
+        return None
 
-    def install(self,name_car,name):
-        car_found=False
-        part_found=False
-        found_car=None
-        found_part=None
-        for car in self.list_cars:
-            if car.name.lower() == name_car.lower():
-                car_found=True
-                found_car=car
-                break
-        for part in self.bought_parts:
-            if part.name.lower() == name.lower():
-                part_found=True
-                found_part=part
-                break
-
-        if car_found and part_found:
-            answer=found_car.install_part(found_part)
-            if answer==1:
-                print('Деталь успешно установлена\n'
-                      f'Прирост мощности составил: +{found_part.boost}\n'
-                      f'Общая мощность автомобиля: {found_car.power}')
-        elif not car_found:
-            print('У вас нет такого автомобиля\n')
-        elif not part_found:
-            print('У вас нет такой детали\n')
-
-    def remove(self,name_car,name):
-        car_found = False
-        part_found = False
-        found_car = None
-        found_part = None
-        for car in self.list_cars:
-            if car.name.lower() == name_car.lower():
-                car_found = True
-                found_car = car
-                break
-        for part in self.bought_parts:
-            if part.name.lower() == name.lower():
-                part_found = True
-                found_part = part
-                break
-
-        if car_found and part_found and found_part.installed and found_part.installed_on is found_car:
-            found_car.remove_part(found_part)
-            print('Деталь успешно демонтирована\n')
-        elif not car_found:
-            print('У вас нет такого автомобиля\n')
-        elif not part_found:
-            print('У вас нет такой детали\n')
-        elif not found_part.installed:
-            print('Деталь не установлена\n')
-        elif found_part.installed_on is not found_car:
-            print('Деталь установлена на другой автомобиль\n')
+    def remove(self, car, part):
+        car.remove_part(part)
+        print('Деталь успешно демонтирована\n')
+        return car, part
 
     def show_cars(self):
         print("Мои автомобили:\n")
         if self.list_cars:
-            for car in self.list_cars:
-                print(f"Авто №{self.list_cars.index(car) + 1}")
+            for number,car in enumerate(self.list_cars,start=1):
+                print(f"Авто №{number}:\n")
                 print(f'Название: {car.name.capitalize()}')
                 print()
         else:
             print('Ваш список автомобилей пуст\n')
 
-    def info_car(self, name):
-        for car in self.list_cars:
-            if car.name.lower() == name.lower():
-                car.print_characteristics()
-                return
-        print('У вас нет такого автомобиля\n')
+    def find_car(self,number_car):
+        if number_car <1 or number_car>len(self.list_cars):
+            raise ValueError('Авто с таким номером нет\n')
+        return self.list_cars[number_car-1]
+
+    def find_part(self, number_part):
+        if number_part < 1 or number_part > len(self.bought_parts):
+            raise ValueError('Детали с таким номером нет\n')
+        return self.bought_parts[number_part - 1]
 
     def show_parts(self):
+        loose_part=False
         print("Мои детали:\n")
         if self.bought_parts:
-            for part in self.bought_parts:
-                print(f"Деталь №{self.bought_parts.index(part) + 1}")
-                print(f'Название: {part.name.capitalize()}\n'
-                          f'Мощность: {part.boost}')
-                print()
+            for number, part in enumerate(self.bought_parts,start=1):
+                if not part.installed:
+                    print(f"Деталь №{number}")
+                    print(f'Название: {part.name.capitalize()}\n'
+                              f'Мощность: {part.boost}')
+                    print()
+                    loose_part=True
+            if not loose_part:
+                print('У вас нет свободных деталей\n')
         else:
             print('Ваш список деталей пуст\n')
 
@@ -160,54 +120,22 @@ class Player:
         elif not part_found:
             print('У вас нет такой детали\n')
 
-    def repair_car(self,name_car):
-        car_found=False
-        found_car = None
-        for car in self.list_cars:
-            if car.name.lower() == name_car.lower():
-                car_found = True
-                found_car = car
-                break
-        if car_found:
-            if found_car.condition<100:
-                cond=100-found_car.condition
-                price=cond*10
-                if self.money >= price:
-                    self.money-=price
-                    found_car.repair()
-                    print(f'Отремантировано: {cond} очков\n'
-                          f'Текущее состояние автомобиля: {found_car.condition}/100\n')
-                else:
-                    print('У вас недостаточно средств\n')
+    def repair_car(self,car):
+        if car.condition<100:
+            cond=100-car.condition
+            price=cond*10
+            if self.money >= price:
+                self.money-=price
+                car.repair()
+                print(f'Отремантировано: {cond} очков\n'
+                f'Текущее состояние автомобиля: {car.condition}/100\n')
             else:
-                print('Ваш автомобиль не нуждается в ремонте\n')
-        elif not car_found:
-            print('У вас нет такого автомобиля\n')
-
-    def damage_car(self,name_car,points):
-        car_found=False
-        found_car = None
-        for car in self.list_cars:
-            if car.name.lower() == name_car.lower():
-                car_found = True
-                found_car = car
-                break
-        if car_found:
-            if found_car.condition>0:
-                found_car.damage(points)
-            else:
-                print('Состояние автомобиля уже 0\n')
+                print('У вас недостаточно средств\n')
         else:
-            print('У вас нет такого автомобиля\n')
+            print('Ваш автомобиль не нуждается в ремонте\n')
 
-    def car_find(self,name):
-        for car in self.list_cars:
-            if car.name.lower() == name.lower():
-                return car.id_car
-        raise ValueError('Автомобиль не найден\n')
-
-    def part_find(self,name):
-        for part in self.bought_parts:
-            if part.name.lower() == name.lower():
-                return part.id_part
-        raise ValueError('Деталь не найдена\n')
+    def damage_car(self,car,points):
+        if car.condition>0:
+            car.damage(points)
+        else:
+            print('Состояние автомобиля уже 0\n')

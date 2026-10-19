@@ -26,11 +26,14 @@ class Car:
         repair_points=100-self.condition
         self.condition+=repair_points
 
-    def damage(self,points_damege):
-        self.condition-=points_damege
-        if self.condition<=0:
-            self.condition=0
-        print(f'Автомобиль поврежден на {points_damege} очков\n')
+    def damage(self, points_damage):
+        if points_damage <= 0:
+            print('Количество очков повреждения должно быть больше нуля\n')
+            return False
+        real_damage = min(points_damage, self.condition)
+        self.condition -= real_damage
+        print(f'Автомобиль поврежден на {real_damage} очков\n')
+        return True
 
     def install_part(self,part):
         if not part.installed:
