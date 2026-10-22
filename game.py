@@ -3,7 +3,6 @@ from DataBase.database import (
     save_player,
     find_playercar,
     delete_part,
-    update_car,
     load_part,
     load_carpart,
     load_car,
@@ -14,6 +13,7 @@ from DataBase.database import (
     save_parts,
     save_car,
     update_player,
+    sell_part
 )
 from Models.Parts.part import Part
 from Models.Car.car import Car
@@ -38,9 +38,11 @@ class Game:
                 print('Пожалуйста, введите число\n')
 
     def save_game(self):
-        update_player(self.id_player, self.player)
-        for car in self.player.list_cars:
-            update_car(car)
+        if not self.player.list_cars:
+            update_player(self.id_player, self.player)
+        else:
+            for car in self.player.list_cars:
+                update_player(self.id_player,self.player,car)
 
     def load_game(self,player_name):
         self.id_player = find_idplayer(player_name)
@@ -74,7 +76,7 @@ class Game:
         return mode
 
     def new_game(self):
-        name=input('Введите имя вашего персонажа: ').strip()
+        name=input('Введите имя вашего персонажа: ').strip().lower()
         print()
         if name:
             self.player = Player(name, 150000)
@@ -119,7 +121,7 @@ class Game:
             elif number == 2:
                 self.garage_menu()
             elif number == 3:
-                self.player.show_parts()
+                self.detail_menu()
                 print()
                 continue
             elif number == 4:
@@ -242,7 +244,7 @@ class Game:
                     car = self.car_shop.find_car(car_name)
                     copy_car=Car(car.name,car.price,car.power,car.weight,car.condition)
                     if self.player.money>=copy_car.price:
-                        answer=save_car(copy_car, self.id_player)
+                        answer=save_car(copy_car, self.id_player,self.player)
                         if answer:
                             answer1=self.player.buy_car(copy_car)
                             if answer1:
@@ -272,7 +274,7 @@ class Game:
                     part = self.part_shop.find_part(part_name)
                     copy_part=Part(part.name,part.price,part.boost)
                     if self.player.money>=copy_part.price:
-                        answer = save_parts(copy_part,self.id_player)
+                        answer = save_parts(copy_part,self.id_player,self.player)
                         if answer:
                             answer1 = self.player.buy_part(copy_part)
                             if answer1:
@@ -288,6 +290,35 @@ class Game:
             elif shop_menu != 2:
                 print('Такого варианта нет')
 
+    def detail_menu(self):
+        detail_menu = 0
+        while detail_menu != 2:
+            self.player.show_parts()
+            print('1. Продать деталь\n'
+                  '2. Назад\n')
+            detail_menu = self.safe_int_input("Выберите действие: ")
+            if detail_menu == 1:
+                if self.player.bought_parts:
+                    number_part = self.safe_int_input('Введите номер детали: ')
+                    try:
+                        part=self.player.find_part(number_part)
+                        cost=part.price//2
+                        if part:
+                            answer=sell_part(self.player,self.id_player,part.id_part,cost)
+                            if answer:
+                                self.player.sale_part(part,cost)
+                                self.save_game()
+                            else:
+                                print('Ошибка обновления БД\n')
+                        else:
+                            print('Такой детали нет\n')
+                    except (ValueError, AttributeError) as e:
+                        print(f'Не удалось продать деталь деталь: {e}\n')
+                else:
+                    print('Ваш список деталей пуст\n')
+            elif detail_menu != 2:
+                print('Такого варианта нет')
+
     def run(self):
         while True:
             mode = self.start_menu()
@@ -297,7 +328,7 @@ class Game:
             elif mode==2:
                 name = input('Введите имя игрока: ')
                 try:
-                    self.load_game(name.lower())
+                    self.load_game(name.strip().lower())
                 except (ValueError, AttributeError) as e:
                     print(f'Не удалось загрузить игру: {e}\n')
                     continue

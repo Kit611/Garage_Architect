@@ -1,5 +1,6 @@
 import os
 import sqlite3
+from pickletools import string1
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.path.join(BASE_DIR, '..', 'DataBase', 'game.db')
@@ -48,52 +49,49 @@ def save_player(name,money):
         print(f'Ошибка сохранения игрока: {e}')
         return None
 
-def save_car(car,id_player):
+def save_car(car,id_player,player):
     try:
         string ='insert into cars(player_id,name,power,weight,condition,price) values(?,?,?,?,?,?)'
         c.execute(string,(id_player,car.name,car.power,car.weight,car.condition,car.price))
         id_car=c.lastrowid
-        car.id_car=id_car
+        string1='update player set money=? where id_player=?'
+        c.execute(string1,(player.money-car.price,id_player))
+        if c.rowcount == 0:
+            conn.rollback()
+            print('Не удалось обновить баланс игрока\n')
+            return False
         conn.commit()
+        car.id_car=id_car
         return True
     except sqlite3.IntegrityError as e:
         conn.rollback()
         print(f'Ошибка сохранения автомобиля: {e}')
         return False
 
-def save_parts(part,player_id):
+def save_parts(part,player_id,player):
     try:
         string ='insert into parts(name,price,boost) values(?,?,?)'
         c.execute(string,(part.name,part.price,part.boost))
         id_part=c.lastrowid
-        part.id_part=id_part
         s = 'select * from player_parts where player_id=? and part_id=?'
         c.execute(s, (player_id, id_part))
         row = c.fetchone()
         if row is None:
             string = 'insert into player_parts(player_id,part_id) values(?,?)'
             c.execute(string, (player_id, id_part))
+        string1='update player set money=? where id_player=?'
+        c.execute(string1, (player.money-part.price,player_id))
+        if c.rowcount == 0:
+            conn.rollback()
+            print('Не удалось обновить баланс игрока\n')
+            return False
         conn.commit()
+        part.id_part=id_part
         return True
-    except sqlite3.IntegrityError as e:
+    except sqlite3.Error as e:
         conn.rollback()
         print(f'Ошибка сохранения деталей: {e}')
-        return None
-
-# def save_partplayer(player_id,part_id):
-#     try:
-#         s='select * from player_parts where player_id=? and part_id=?'
-#         c.execute(s,(player_id,part_id))
-#         row=c.fetchone()
-#         if row is None:
-#             string ='insert into player_parts(player_id,part_id) values(?,?)'
-#             c.execute(string,(player_id,part_id))
-#             conn.commit()
-#         return True
-#     except sqlite3.IntegrityError as e:
-#         conn.rollback()
-#         print(f'Ошибка сохранения деталей игрока: {e}')
-#         return False
+        return False
 
 def save_partcar(car_id,part_id):
     try:
@@ -172,29 +170,36 @@ def find_playercar(id_player):
     rows=c.fetchall()
     return [row[0] for row in rows]
 
-def update_player(id_player,alex):
+def update_player(id_player,alex,car=None):
     try:
-        string='update player set name=?,money=? where id_player=?'
-        c.execute(string,(alex.name_player,alex.money,id_player))
-        conn.commit()
-        if c.rowcount == 0:
-            print(f'Игрок с именем: {alex.name_player} не найден, обновление не выполнено')
+        if car is not None:
+            string='update player set name=?,money=? where id_player=?'
+            c.execute(string,(alex.name_player,alex.money,id_player))
+            if c.rowcount == 0:
+                conn.rollback()
+                print(f'Игрок с именем: {alex.name_player} не найден, обновление не выполнено')
+                return False
+            string1 = 'update cars set name=? ,weight=? ,condition=? ,price=? where id_car=?'
+            c.execute(string1, (car.name, car.weight, car.condition, car.price, car.id_car))
+            if c.rowcount == 0:
+                conn.rollback()
+                print(f'Автомобиль с id={car.id_car} не найден, обновление не выполнено')
+                return False
+            conn.commit()
+            return True
+        else:
+            string = 'update player set name=?,money=? where id_player=?'
+            c.execute(string, (alex.name_player, alex.money, id_player))
+            if c.rowcount == 0:
+                conn.rollback()
+                print(f'Игрок с именем: {alex.name_player} не найден, обновление не выполнено')
+                return False
+            conn.commit()
+            return True
     except sqlite3.IntegrityError as e:
         conn.rollback()
-        print(f'Ошибка обновления денег: {e}')
-        return None
-
-def update_car(car):
-    try:
-        string='update cars set name=? ,weight=? ,condition=? ,price=? where id_car=?'
-        c.execute(string,(car.name,car.weight,car.condition,car.price,car.id_car))
-        conn.commit()
-        if c.rowcount == 0:
-            print(f'Автомобиль с id={car.id_car} не найден, обновление не выполнено')
-    except sqlite3.IntegrityError as e:
-        conn.rollback()
-        print(f'Ошибка обновления автомобиля {e}')
-        return None
+        print(f'Ошибка обновления игрока: {e}')
+        return False
 
 def delete_part(id_car,id_part):
     try:
@@ -220,3 +225,30 @@ def find_car_part(id_car,id_part):
         conn.rollback()
         print(f'Нет установленных деталей {e}')
         return None
+
+def sell_part(player,id_player,part_id,cost):
+    try:
+        string='delete from player_parts where player_id=? and part_id=?'
+        c.execute(string,(id_player,part_id))
+        if c.rowcount == 0:
+            conn.rollback()
+            print('Ошибка удаления связи\n')
+            return False
+        string1='delete from parts where part_id=?'
+        c.execute(string1,(part_id,))
+        if c.rowcount == 0:
+            conn.rollback()
+            print('Ошибка удаления из деталей\n')
+            return False
+        str='update player set money=? where id_player=?'
+        c.execute(str,(player.money+cost,id_player))
+        if c.rowcount == 0:
+            conn.rollback()
+            print('Ошибка обновления баланса\n')
+            return False
+        conn.commit()
+        return True
+    except sqlite3.Error as e:
+        conn.rollback()
+        print('Ошибка соххранения изменений\n')
+        return False

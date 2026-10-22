@@ -103,22 +103,12 @@ class Player:
         else:
             print('Ваш список деталей пуст\n')
 
-    def sale_part(self,name):
-        part_found=False
-        found_part = None
-        for part in self.bought_parts:
-            if part.name.lower() == name.lower():
-                part_found=True
-                found_part = part
-                break
-        if part_found:
-            if found_part.installed:
-                print('Деталь уже усновлена\n')
-            elif not found_part.installed:
-                self.bought_parts.remove(found_part)
-                self.money+=found_part.price
-        elif not part_found:
-            print('У вас нет такой детали\n')
+    def sale_part(self,part,cost):
+        if part.installed:
+            print('Деталь уже усновлена\n')
+        elif not part.installed:
+            self.bought_parts.remove(part)
+            self.money+= cost
 
     def repair_car(self,car):
         if car.condition<100:
