@@ -110,6 +110,15 @@ class Player:
             self.bought_parts.remove(part)
             self.money+= cost
 
+    def sale_car(self, car, cost, list_id_part=None):
+        if list_id_part is not None:
+            self.bought_parts = [
+                part for part in self.bought_parts
+                if part.id_part not in list_id_part
+            ]
+        self.list_cars.remove(car)
+        self.money += cost
+
     def repair_car(self,car):
         if car.condition<100:
             cond=100-car.condition

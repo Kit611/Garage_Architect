@@ -1,3 +1,5 @@
+from traceback import print_tb
+
 from Models.Player.player import   Player
 from DataBase.database import (
     save_player,
@@ -13,7 +15,8 @@ from DataBase.database import (
     save_parts,
     save_car,
     update_player,
-    sell_part
+    sell_part,
+    sale_car
 )
 from Models.Parts.part import Part
 from Models.Car.car import Car
@@ -134,14 +137,15 @@ class Game:
 
     def garage_menu(self):
         garage_menu = 0
-        while garage_menu != 6:
+        while garage_menu != 7:
             self.player.show_cars()
             print('1. Починить автомомбиль\n'
                   '2. Установить деталь\n'
                   '3. Снять деталь\n'
                   '4. Посмотреть характеристики\n'
                   '5. Повредить автомобиль\n'
-                  '6. Назад\n')
+                  '6. Продать автомобиль\n'
+                  '7. Назад\n')
             garage_menu = self.safe_int_input("Выберите действие: ")
             print()
             if garage_menu == 1:
@@ -227,7 +231,32 @@ class Game:
                         print(f'Автомобиль не найден: {e}\n')
                 else:
                     print('У вас нет автомобилей\n')
-            elif garage_menu != 6:
+            elif garage_menu == 6:
+                confirm=input('Подтвердите выбор(y/n): ').strip().lower()
+                if confirm=='y':
+                    if self.player.list_cars:
+                        number_car=self.safe_int_input('Введите номер автомобиля: ')
+                        print()
+                        try:
+                            car=self.player.find_car(number_car)
+                            cost=car.price//2
+                            list_id_part=[]
+                            for part in car.parts:
+                                cost+=part.price//2
+                                list_id_part.append(part.id_part)
+                            answer=sale_car(self.player,self.id_player,car.id_car,cost,list_id_part)
+                            if answer:
+                                self.player.sale_car(car,cost,list_id_part)
+                                self.save_game()
+                            else:
+                                print('Ошибка продажи\n')
+                        except (ValueError, AttributeError) as e:
+                            print(f'Не удалось продать автомобиль: {e}\n')
+                elif confirm=='n':
+                    continue
+                else:
+                    print('Такого варианта нет\n')
+            elif garage_menu != 7:
                 print('Такого варианта нет')
 
     def car_shop_menu(self):
@@ -238,6 +267,7 @@ class Game:
                   '2. Назад\n')
             shop_menu = self.safe_int_input("Выберите действие: ")
             if shop_menu == 1:
+
                 car_name = input('Введите название автомобиля: ').lower()
                 print()
                 try:
@@ -298,26 +328,32 @@ class Game:
                   '2. Назад\n')
             detail_menu = self.safe_int_input("Выберите действие: ")
             if detail_menu == 1:
-                if self.player.bought_parts:
-                    number_part = self.safe_int_input('Введите номер детали: ')
-                    try:
-                        part=self.player.find_part(number_part)
-                        cost=part.price//2
-                        if part:
-                            answer=sell_part(self.player,self.id_player,part.id_part,cost)
-                            if answer:
-                                self.player.sale_part(part,cost)
-                                self.save_game()
+                confirm=input('Подтвердите выбор(y/n): ').strip().lower()
+                if confirm=='y':
+                    if self.player.bought_parts:
+                        number_part = self.safe_int_input('Введите номер детали: ')
+                        try:
+                            part=self.player.find_part(number_part)
+                            cost=part.price//2
+                            if part:
+                                answer=sell_part(self.player,self.id_player,part.id_part,cost)
+                                if answer:
+                                    self.player.sale_part(part,cost)
+                                    self.save_game()
+                                else:
+                                    print('Ошибка обновления БД\n')
                             else:
-                                print('Ошибка обновления БД\n')
-                        else:
-                            print('Такой детали нет\n')
-                    except (ValueError, AttributeError) as e:
-                        print(f'Не удалось продать деталь деталь: {e}\n')
+                                print('Такой детали нет\n')
+                        except (ValueError, AttributeError) as e:
+                            print(f'Не удалось продать деталь: {e}\n')
+                    else:
+                        print('Ваш список деталей пуст\n')
+                elif confirm=='n':
+                    continue
                 else:
-                    print('Ваш список деталей пуст\n')
+                    print('Такого варианта нет\n')
             elif detail_menu != 2:
-                print('Такого варианта нет')
+                print('Такого варианта нет\n')
 
     def run(self):
         while True:

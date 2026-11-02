@@ -250,5 +250,42 @@ def sell_part(player,id_player,part_id,cost):
         return True
     except sqlite3.Error as e:
         conn.rollback()
-        print('Ошибка соххранения изменений\n')
+        print(f'Ошибка сохранения изменений:{e}\n')
+        return False
+
+def sale_car(player,player_id,car_id,cost,list_id_part):
+    try:
+        if list_id_part:
+            string = 'delete from car_parts where car_id=?'
+            c.execute(string, (car_id,))
+            for id in list_id_part:
+                string1 = 'delete from player_parts where player_id=? and part_id=?'
+                c.execute(string1, (player_id, id))
+                if c.rowcount == 0:
+                    conn.rollback()
+                    print('Ошибка удаления связи\n')
+                    return False
+                string2='delete from parts where id_part=?'
+                c.execute(string2,(id,))
+                if c.rowcount == 0:
+                    conn.rollback()
+                    print('Ошибка удаления детали')
+                    return False
+        string3 = 'delete from cars where player_id=? and id_car=?'
+        c.execute(string3, (player_id, car_id))
+        if c.rowcount == 0:
+            conn.rollback()
+            print('Ошибка удаления связи\n')
+            return False
+        str='update player set money=? where id_player=?'
+        c.execute(str,(player.money+cost,player_id))
+        if c.rowcount == 0:
+            conn.rollback()
+            print('Ошибка обновления баланса\n')
+            return False
+        conn.commit()
+        return True
+    except sqlite3.Error as e:
+        conn.rollback()
+        print(f'Ошибка сохранения изменений:{e}\n')
         return False
