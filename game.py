@@ -54,19 +54,19 @@ class Game:
 
         parts_by_id = {}
         for id_part in load_playerpart(self.id_player):
-            part_id, name_part, price_part, boost = load_part(id_part)
-            part = Part(name_part, price_part, boost, part_id)
+            part_id, name_part, price_part, boost,acceleration = load_part(id_part)
+            part = Part(name_part, price_part, boost, acceleration,part_id)
             parts_by_id[id_part] = part
             self.player.add_part(part)
 
         for id_car in find_playercar(self.id_player):
-            car_id, name_car, price, power, weight, condition = load_car(id_car)
-            car = Car(name_car, price, power, weight, condition, id_car)
+            car_id, name_car, price, power, weight, condition,initial_acceleration = load_car(id_car)
+            car = Car(name_car, price, power, weight, condition,initial_acceleration,id_car)
             for id_part in load_carpart(id_car):
                 part = parts_by_id.get(id_part)
                 if part is None:
-                    part_id, name_part, price_part, boost = load_part(id_part)
-                    part = Part(name_part, price_part, boost, part_id)
+                    part_id, name_part, price_part, boost,acceleration = load_part(id_part)
+                    part = Part(name_part, price_part, boost,acceleration,part_id)
                 car.install_part(part)
 
             self.player.add_car(car)
@@ -93,10 +93,10 @@ class Game:
             return False
 
     def setup_shop(self):
-        skyline = Car("Skyline", 30000, 300, 1100, 70)
-        mazda = Car("mazda", 25000, 120, 1350, 80)
-        turbo = Part("Turbina", 30000, 50)
-        exhaust = Part('Exhaust', 15000, 10)
+        skyline = Car("Skyline", 30000, 300, 1100, 70,5.5)
+        mazda = Car("mazda", 25000, 120, 1350, 80,9.9)
+        turbo = Part("Turbina", 30000, 50,0.5)
+        exhaust = Part('Exhaust', 15000, 10,0.2)
         self.part_shop.add_part(turbo)
         self.part_shop.add_part(exhaust)
         self.car_shop.add_car(skyline)
@@ -137,15 +137,16 @@ class Game:
 
     def garage_menu(self):
         garage_menu = 0
-        while garage_menu != 7:
+        while garage_menu != 8:
             self.player.show_cars()
             print('1. Починить автомомбиль\n'
                   '2. Установить деталь\n'
                   '3. Снять деталь\n'
                   '4. Посмотреть характеристики\n'
-                  '5. Повредить автомобиль\n'
-                  '6. Продать автомобиль\n'
-                  '7. Назад\n')
+                  '5. Заезд\n'
+                  '6. Повредить автомобиль\n'
+                  '7. Продать автомобиль\n'
+                  '8. Назад\n')
             garage_menu = self.safe_int_input("Выберите действие: ")
             print()
             if garage_menu == 1:
@@ -221,6 +222,15 @@ class Game:
                 if self.player.list_cars:
                     number_car = self.safe_int_input('Введите номер автомобиля: ')
                     print()
+                    try:
+                        car=self.player.find_car(number_car)
+                        car.arreal()
+                    except (ValueError, AttributeError) as e:
+                        print(f'Автомобиль не найден: {e}\n')
+            elif garage_menu == 6:
+                if self.player.list_cars:
+                    number_car = self.safe_int_input('Введите номер автомобиля: ')
+                    print()
                     points = self.safe_int_input('Введите количество очков повреждения: ')
                     print()
                     try:
@@ -231,7 +241,7 @@ class Game:
                         print(f'Автомобиль не найден: {e}\n')
                 else:
                     print('У вас нет автомобилей\n')
-            elif garage_menu == 6:
+            elif garage_menu == 7:
                 confirm=input('Подтвердите выбор(y/n): ').strip().lower()
                 if confirm=='y':
                     if self.player.list_cars:
@@ -256,7 +266,7 @@ class Game:
                     continue
                 else:
                     print('Такого варианта нет\n')
-            elif garage_menu != 7:
+            elif garage_menu != 8:
                 print('Такого варианта нет')
 
     def car_shop_menu(self):
@@ -272,7 +282,7 @@ class Game:
                 print()
                 try:
                     car = self.car_shop.find_car(car_name)
-                    copy_car=Car(car.name,car.price,car.power,car.weight,car.condition)
+                    copy_car=Car(car.name,car.price,car.power,car.weight,car.condition,car.initial_acceleration)
                     if self.player.money>=copy_car.price:
                         answer=save_car(copy_car, self.id_player,self.player)
                         if answer:
@@ -302,7 +312,7 @@ class Game:
                 print()
                 try:
                     part = self.part_shop.find_part(part_name)
-                    copy_part=Part(part.name,part.price,part.boost)
+                    copy_part=Part(part.name,part.price,part.boost,part.acceleration)
                     if self.player.money>=copy_part.price:
                         answer = save_parts(copy_part,self.id_player,self.player)
                         if answer:

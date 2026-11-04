@@ -1,13 +1,14 @@
 #название: турбина, цена: 30 000, прибавка к мощности: 50, флаг установлености
 
 class Part:
-    def __init__(self,name,price,boost,id_part=None):
+    def __init__(self,name,price,boost,acceleration,id_part=None):
         self.id_part=id_part
         self.name = name
         self.price = price
         self.boost = boost
         self.installed = False
         self.installed_on=None
+        self.acceleration = acceleration
 
 
     def print_characteristics(self):

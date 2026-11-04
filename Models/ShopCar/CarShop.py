@@ -1,5 +1,3 @@
-from Models.Car.car import Car
-
 class CarShop:
     def __init__(self):
         self.cars=[]
@@ -10,7 +8,10 @@ class CarShop:
     def show(self):
         for car in self.cars:
             print(f"Авто №{self.cars.index(car)+1}")
-            print(f"Название:{car.name.capitalize()}\nЦена: {car.price}\n")
+            print(f"Название: {car.name.capitalize()}\n"
+                  f"Мощность: {car.power}\n"
+                  f"Разгон:{car.initial_acceleration}\n"
+                  f"Цена: {car.price}\n")
 
     def find_car(self, name):
         for car in self.cars:

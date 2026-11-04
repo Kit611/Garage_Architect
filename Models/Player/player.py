@@ -1,7 +1,3 @@
-from Models.Car.car import Car
-from Models.Parts.part import Part
-from Models.ShopPart.PartShop import ShopPart
-
 class Player:
     def __init__(self,name_player,money):
         self.name_player = name_player

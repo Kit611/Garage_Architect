@@ -1,19 +1,29 @@
 #Название: скайлайн. Мощность: 300 л.с. Масса: 1,100. Состояние: 70/100
 #Ремотнироваться, показывать характеристики, получать повреждения
-from Models.Parts.part import Part
+import time
+from asyncio import timeout
+
 
 class Car:
-    def __init__(self,name,price,power,weight,condition,id_car=None):
+    def __init__(self,name,price,power,weight,condition,initial_acceleration,id_car=None):
         self.id_car=id_car
         self.name=name
         self.price=price
         self.power=power
         self.weight=weight
         self.condition=condition
+        self.initial_acceleration=initial_acceleration
+        self.acceleration=initial_acceleration
         self.parts=[]
 
     def print_characteristics(self):
-        print(f"Название: {self.name.capitalize()}\nЦена:{self.price} \nМощность: {self.power} \nВес: {self.weight} \nСостояние: {self.condition}/100")
+        print(f"Название: {self.name.capitalize()}"
+              f"\nЦена:{self.price}"
+              f"\nМощность: {self.power}"
+              f"\nВес: {self.weight}"
+              f"\nСостояние: {self.condition}/100\n"
+              f"Текущее ускорении 0-100 км/ч: {self.acceleration} cек.\n"
+              f"Заводское значение: {self.initial_acceleration} cек.\n")
         for part in self.parts:
             print(f"Установленные детали:\n{part.name.capitalize()}\n")
 
@@ -39,6 +49,7 @@ class Car:
         if not part.installed:
             self.parts.append(part)
             self.power+=part.boost
+            self.acceleration-=part.acceleration
             part.installed=True
             part.installed_on=self
             return 1
@@ -58,5 +69,22 @@ class Car:
             self.power-=part.boost
             part.installed=False
             part.installed_on=None
+            self.acceleration+=part.acceleration
         else:
             print('Деталь установлена на другой автомобиль\n')
+
+    def arreal(self):
+        fine=(100-self.condition)*0.01
+        print('Разгон от 0 до 100 км/ч\n')
+        print('Начало заезда через 3\n')
+        time.sleep(1)
+        print('2\n')
+        time.sleep(1)
+        print('1\n')
+        time.sleep(1)
+        print('Заезд окончен.\n'
+              f'Заводское время: {self.initial_acceleration:.2f} сек.\n'
+              f'Штраф за повреждения: {fine:.2f}\n'
+              f'Выигрыш от тюнинга:  {self.initial_acceleration-self.acceleration:.2f} сек.\n'
+              f'Итоговое время разгона: {self.acceleration+fine:.2f} сек.\n'
+              )

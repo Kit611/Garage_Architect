@@ -1,6 +1,5 @@
 import os
 import sqlite3
-from pickletools import string1
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.path.join(BASE_DIR, '..', 'DataBase', 'game.db')
@@ -13,19 +12,36 @@ c.execute(pragma)
 conn.commit()
 
 
-player_tb='CREATE TABLE IF NOT EXISTS player(id_player integer primary key autoincrement ,name text collate nocase UNIQUE,money real check(money>=0))'
+player_tb=('CREATE TABLE IF NOT EXISTS player(id_player integer primary key autoincrement,'
+           'name text collate nocase UNIQUE,'
+           'money real check(money>=0))')
 c.execute(player_tb)
 conn.commit()
-car_tb='create table if not exists cars(id_car integer primary key autoincrement,player_id integer references player(id_player) on delete cascade,name text,power integer check(power>0),weight integer check(weight>0), condition integer check(condition>=0),price real check(price>=0))'
+car_tb=('create table if not exists cars(id_car integer primary key autoincrement,'
+        'player_id integer references player(id_player) on delete cascade,'
+        'name text,'
+        'power integer check(power>0),'
+        'weight integer check(weight>0),'
+        'condition integer check(condition>=0),'
+        'price real check(price>=0),'
+        'acceleration float check(acceleration >=0))')
 c.execute(car_tb)
 conn.commit()
-part_tb='create table if not exists parts(id_part integer primary key autoincrement, name text,price real check(price>=0),boost integer check(boost>=0))'
+part_tb=('create table if not exists parts(id_part integer primary key autoincrement,'
+         'name text,'
+         'price real check(price>=0),'
+         'boost integer check(boost>=0),'
+         'acceleration float check(acceleration>=0))')
 c.execute(part_tb)
 conn.commit()
-playerpart_tb='create table if not exists player_parts(id integer primary key autoincrement,player_id integer references player(id_player) on delete cascade,part_id integer  references parts(id_part))'
+playerpart_tb=('create table if not exists player_parts(id integer primary key autoincrement,'
+               'player_id integer references player(id_player) on delete cascade,'
+               'part_id integer  references parts(id_part))')
 c.execute(playerpart_tb)
 conn.commit()
-carpart_tb='create table if not exists car_parts(id integer primary key autoincrement,car_id integer references cars(id_car) on delete cascade, part_id integer references parts(id_part))'
+carpart_tb=('create table if not exists car_parts(id integer primary key autoincrement'
+            ',car_id integer references cars(id_car) on delete cascade,'
+            'part_id integer references parts(id_part))')
 c.execute(carpart_tb)
 conn.commit()
 
@@ -51,8 +67,8 @@ def save_player(name,money):
 
 def save_car(car,id_player,player):
     try:
-        string ='insert into cars(player_id,name,power,weight,condition,price) values(?,?,?,?,?,?)'
-        c.execute(string,(id_player,car.name,car.power,car.weight,car.condition,car.price))
+        string ='insert into cars(player_id,name,power,weight,condition,price,acceleration) values(?,?,?,?,?,?,?)'
+        c.execute(string,(id_player,car.name,car.power,car.weight,car.condition,car.price,car.initial_acceleration))
         id_car=c.lastrowid
         string1='update player set money=? where id_player=?'
         c.execute(string1,(player.money-car.price,id_player))
@@ -70,8 +86,8 @@ def save_car(car,id_player,player):
 
 def save_parts(part,player_id,player):
     try:
-        string ='insert into parts(name,price,boost) values(?,?,?)'
-        c.execute(string,(part.name,part.price,part.boost))
+        string ='insert into parts(name,price,boost,acceleration) values(?,?,?,?)'
+        c.execute(string,(part.name,part.price,part.boost,part.acceleration))
         id_part=c.lastrowid
         s = 'select * from player_parts where player_id=? and part_id=?'
         c.execute(s, (player_id, id_part))
@@ -127,7 +143,8 @@ def load_car(id_car):
         weight=car[4]
         condition=car[5]
         price=car[6]
-        return car_id,name,price,power,weight,condition
+        initial_acceleration=car[7]
+        return car_id,name,price,power,weight,condition,initial_acceleration
     else:
         raise ValueError(f'Автомобиль с id: {id_car} не найдена')
 
@@ -140,7 +157,8 @@ def load_part(id_part):
         name=part[1]
         price=part[2]
         boost=part[3]
-        return id_part,name,price,boost
+        initial_acceleration=part[4]
+        return id_part,name,price,boost,initial_acceleration
     else:
         raise ValueError(f'Деталь с id: {id_part} не найдена')
 
