@@ -1,8 +1,6 @@
 #Название: скайлайн. Мощность: 300 л.с. Масса: 1,100. Состояние: 70/100
 #Ремотнироваться, показывать характеристики, получать повреждения
 import time
-from asyncio import timeout
-
 
 class Car:
     def __init__(self,name,price,power,weight,condition,initial_acceleration,id_car=None):
@@ -47,12 +45,16 @@ class Car:
 
     def install_part(self,part):
         if not part.installed:
-            self.parts.append(part)
-            self.power+=part.boost
-            self.acceleration-=part.acceleration
-            part.installed=True
-            part.installed_on=self
-            return 1
+            if self.acceleration-part.acceleration>0:
+                self.parts.append(part)
+                self.power+=part.boost
+                self.acceleration-=part.acceleration
+                part.installed=True
+                part.installed_on=self
+                return 1
+            else:
+                print('Установить деталь не получилось. Ускорение меньше нуля')
+                return 0
         else:
             print('Деталь уже установлена\n')
             return 0
@@ -75,6 +77,7 @@ class Car:
 
     def arreal(self):
         fine=(100-self.condition)*0.01
+        acceleration_with_fine=self.acceleration+fine
         print('Разгон от 0 до 100 км/ч\n')
         print('Начало заезда через 3\n')
         time.sleep(1)
@@ -86,5 +89,11 @@ class Car:
               f'Заводское время: {self.initial_acceleration:.2f} сек.\n'
               f'Штраф за повреждения: {fine:.2f}\n'
               f'Выигрыш от тюнинга:  {self.initial_acceleration-self.acceleration:.2f} сек.\n'
-              f'Итоговое время разгона: {self.acceleration+fine:.2f} сек.\n'
+              f'Итоговое время разгона: {acceleration_with_fine:.2f} сек.\n'
               )
+        return acceleration_with_fine
+
+    def get_time_race(self):
+        fine = (100 - self.condition) * 0.01
+        acceleration_with_fine = self.acceleration + fine
+        return acceleration_with_fine

@@ -1,9 +1,10 @@
 class Player:
-    def __init__(self,name_player,money):
+    def __init__(self,name_player,money,wins=0):
         self.name_player = name_player
         self.money = money
         self.list_cars=[]
         self.bought_parts=[]
+        self.wins=wins
 
     def add_car(self,car):
         self.list_cars.append(car)
@@ -12,7 +13,9 @@ class Player:
         self.bought_parts.append(part)
 
     def print_info(self):
-        print(f"Имя: {self.name_player.capitalize()}\nБаланс: {self.money} Сoins\n")
+        print(f"Имя: {self.name_player.capitalize()}\n"
+              f"Баланс: {self.money} Сoins\n"
+              f"Победы: {self.wins}\n")
 
     def buy_part(self,part):
         part_found = False
@@ -54,7 +57,8 @@ class Player:
         if car.install_part(part) == 1:
             print('Деталь успешно установлена\n'
                   f'Прирост мощности составил: +{part.boost}\n'
-                  f'Общая мощность автомобиля: {car.power}\n')
+                  f'Общая мощность автомобиля: {car.power}\n'
+                  f'Сокращение времени разгона на: -{part.acceleration}\n')
             return car, part
         return None
 

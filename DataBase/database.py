@@ -14,7 +14,8 @@ conn.commit()
 
 player_tb=('CREATE TABLE IF NOT EXISTS player(id_player integer primary key autoincrement,'
            'name text collate nocase UNIQUE,'
-           'money real check(money>=0))')
+           'money real check(money>=0),'
+           'wins integer not null default 0 check(wins>=0))')
 c.execute(player_tb)
 conn.commit()
 car_tb=('create table if not exists cars(id_car integer primary key autoincrement,'
@@ -128,7 +129,8 @@ def load_player(id_player):
     if player is not None:
         name=player[1]
         money=player[2]
-        return name,money
+        wins=player[3]
+        return name,money,wins
     else:
         raise ValueError(f'Игрок с id: {id_player} не найден')
 
@@ -191,8 +193,8 @@ def find_playercar(id_player):
 def update_player(id_player,alex,car=None):
     try:
         if car is not None:
-            string='update player set name=?,money=? where id_player=?'
-            c.execute(string,(alex.name_player,alex.money,id_player))
+            string='update player set name=?,money=?,wins=? where id_player=?'
+            c.execute(string,(alex.name_player,alex.money,id_player,alex.wins))
             if c.rowcount == 0:
                 conn.rollback()
                 print(f'Игрок с именем: {alex.name_player} не найден, обновление не выполнено')

@@ -1,5 +1,6 @@
-from traceback import print_tb
+import time
 
+from Models.Opponent.Opponent import Opponent
 from Models.Player.player import   Player
 from DataBase.database import (
     save_player,
@@ -31,6 +32,16 @@ class Game:
         self.car_shop=CarShop()
         self.part_shop=ShopPart()
         self.setup_shop()
+        self.opponent=[]
+        opponent_bmw=Car('BMW M3',60000,400,1500,100,4.5)
+        opponent_civic=Car('Honda Civic',30000,180,1250,100,8.5)
+        opponent_gtr=Car('Nissan GT-R',100000,550,1500,100,3.5)
+        max=Opponent('Max',opponent_bmw,2)
+        leo=Opponent('Leo',opponent_civic,1)
+        victor=Opponent('Victor',opponent_gtr,3)
+        self.opponent.append(max)
+        self.opponent.append(leo)
+        self.opponent.append(victor)
 
     @staticmethod
     def safe_int_input(prompt):
@@ -49,8 +60,8 @@ class Game:
 
     def load_game(self,player_name):
         self.id_player = find_idplayer(player_name)
-        name, money = load_player(self.id_player)
-        self.player = Player(name, money)
+        name, money,wins = load_player(self.id_player)
+        self.player = Player(name, money,wins)
 
         parts_by_id = {}
         for id_part in load_playerpart(self.id_player):
@@ -104,17 +115,18 @@ class Game:
 
     def game_loop(self):
         item_menu=0
-        while item_menu != 6:
+        while item_menu != 7:
             print("=== МЕНЮ ===\n")
             print("1. Информация о игроке\n"
                   "2. Гараж\n"
                   "3. Мои детали\n"
                   "4. Автосалон\n"
                   "5. Магазин деталей\n"
-                  "6. Выход\n")
+                  "6. Гонка\n"
+                  "7. Выход\n")
             number = self.safe_int_input("Выберите действие: ")
             print()
-            if number <= 0 or number > 6:
+            if number <= 0 or number > 7:
                 print('Такого варианта нет\n')
                 continue
             elif number == 1:
@@ -132,6 +144,8 @@ class Game:
             elif number == 5:
                 self.part_shop_menu()
             elif number == 6:
+                self.race_menu()
+            elif number == 7:
                 self.save_game()
                 return
 
@@ -364,6 +378,87 @@ class Game:
                     print('Такого варианта нет\n')
             elif detail_menu != 2:
                 print('Такого варианта нет\n')
+
+    def show_opponents(self):
+        print('Достунные соперники:\n')
+        opponents=self.get_avaliable_opponent()
+        for i in range(len(opponents)):
+            if opponents[i].difficult==1:
+                print(f'{i+1}. {opponents[i].name} - {opponents[i].car.name} - Сложность: Легкий\n')
+            elif opponents[i].difficulty==2:
+                print(f'{i+1}. {opponents[i].name} - {opponents[i].car.name} - Сложность: Средний\n')
+            elif opponents[i].difficulty==3:
+                print(f'{i+1}. {opponents[i].name} - {opponents[i].car.name} - Сложность: Сложный\n')
+
+    def find_opponent(self,number_opponent):
+        opponents=self.get_avaliable_opponent()
+        if number_opponent<1 or number_opponent>len(opponents):
+            raise ValueError('Соперника с таким номером нет\n')
+        return opponents[number_opponent-1]
+
+    def get_avaliable_opponent(self):
+        max_diffuculty=min(self.player.wins+1,3)
+        return [
+            opponent for opponent in self.opponent
+            if opponent.difficult<=max_diffuculty
+        ]
+
+    def race(self,car,opponent):
+        rewards={
+            1:500,
+            2:1000,
+            3:2000
+        }
+        print('Начало гонки!\n')
+        time.sleep(1)
+        print('1')
+        time.sleep(1)
+        print('2')
+        time.sleep(1)
+        print('3')
+        player_time=car.get_time_race()
+        opponent_time=opponent.car.get_time_race()
+        if player_time is not None and opponent_time is not None:
+            print(f'Ваше время: {player_time} с.\n'
+                  f'Время соперника: {opponent_time} с.\n'
+                  f'И победителем становится...\n')
+            if player_time>opponent_time:
+                print(f'Соперник {opponent.name}\n')
+                car.damage(10)
+                self.save_game()
+            elif player_time<opponent_time:
+                print('Вы\n')
+                self.player.money+=rewards[opponent.difficult]
+                print(f'Ваша награда составила: {rewards[opponent.difficult]}\n')
+                self.player.wins+=1
+                self.save_game()
+            else:
+                print('Никто. Ничья\n')
+                car.damage(5)
+                self.save_game()
+
+    def race_menu(self):
+        if self.player.list_cars:
+            self.player.show_cars()
+            number_car=self.safe_int_input('Введите номер автомобиля: ')
+            print()
+            try:
+                player_car=self.player.find_car(number_car)
+            except (ValueError, AttributeError) as e:
+                print(f'Не удалось найти автомобиль: {e}\n')
+                return False
+            self.show_opponents()
+            number_opponent=self.safe_int_input('Введитие номер соперника: ')
+            print()
+            try:
+                opponent=self.find_opponent(number_opponent)
+            except (ValueError, AttributeError) as e:
+                print(f'Не удалось найти соперника: {e}\n')
+                return False
+            self.race(player_car,opponent)
+        else:
+            print('Ваш список автомобилей пуст, провести гонку невозможно\n')
+            return False
 
     def run(self):
         while True:
