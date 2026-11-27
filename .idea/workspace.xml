@@ -4,14 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="858df308-595a-41b3-8fd8-c64e1adffbcc" name="Changes" comment="version 0.1.8">
-      <change afterPath="$PROJECT_DIR$/Models/Opponent/Opponent.py" afterDir="false" />
+    <list default="true" id="858df308-595a-41b3-8fd8-c64e1adffbcc" name="Changes" comment="version 0.1.9">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/DataBase/database.py" beforeDir="false" afterPath="$PROJECT_DIR$/DataBase/database.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/DataBase/game.db" beforeDir="false" afterPath="$PROJECT_DIR$/DataBase/game.db" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Models/Car/car.py" beforeDir="false" afterPath="$PROJECT_DIR$/Models/Car/car.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Models/Player/player.py" beforeDir="false" afterPath="$PROJECT_DIR$/Models/Player/player.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/game.py" beforeDir="false" afterPath="$PROJECT_DIR$/game.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -54,36 +52,36 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Python.CarShop.executor": "Run",
-    "Python.Opponent.executor": "Run",
-    "Python.PartShop.executor": "Run",
-    "Python.car.executor": "Run",
-    "Python.database.executor": "Run",
-    "Python.drop_tb.executor": "Run",
-    "Python.game.executor": "Run",
-    "Python.main.executor": "Run",
-    "Python.part.executor": "Run",
-    "Python.player.executor": "Run",
-    "Python.test.executor": "Run",
-    "Python.test_compress_numbers.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "master",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "database.query.execution",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Python.CarShop.executor&quot;: &quot;Run&quot;,
+    &quot;Python.Opponent.executor&quot;: &quot;Run&quot;,
+    &quot;Python.PartShop.executor&quot;: &quot;Run&quot;,
+    &quot;Python.car.executor&quot;: &quot;Run&quot;,
+    &quot;Python.database.executor&quot;: &quot;Run&quot;,
+    &quot;Python.drop_tb.executor&quot;: &quot;Run&quot;,
+    &quot;Python.game.executor&quot;: &quot;Run&quot;,
+    &quot;Python.main.executor&quot;: &quot;Run&quot;,
+    &quot;Python.part.executor&quot;: &quot;Run&quot;,
+    &quot;Python.player.executor&quot;: &quot;Run&quot;,
+    &quot;Python.test.executor&quot;: &quot;Run&quot;,
+    &quot;Python.test_compress_numbers.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;database.query.execution&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "DatabaseDriversLRU": [
-      "sqlite"
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;sqlite&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\Admin\PycharmProjects\garage_architect" />
@@ -136,7 +134,8 @@
       <workItem from="1793784348965" duration="6298000" />
       <workItem from="1794419930148" duration="1547000" />
       <workItem from="1795436524080" duration="2603000" />
-      <workItem from="1795510856808" duration="9524000" />
+      <workItem from="1795510856808" duration="9879000" />
+      <workItem from="1795774138664" duration="5311000" />
     </task>
     <task id="LOCAL-00001" summary="version 0.0.2">
       <option name="closed" value="true" />
@@ -290,7 +289,15 @@
       <option name="project" value="LOCAL" />
       <updated>1793794873675</updated>
     </task>
-    <option name="localTasksCounter" value="20" />
+    <task id="LOCAL-00020" summary="version 0.1.9">
+      <option name="closed" value="true" />
+      <created>1795520612267</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1795520612267</updated>
+    </task>
+    <option name="localTasksCounter" value="21" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -325,20 +332,21 @@
     <MESSAGE value="version 0.1.6" />
     <MESSAGE value="version 0.1.7" />
     <MESSAGE value="version 0.1.8" />
-    <option name="LAST_COMMIT_MESSAGE" value="version 0.1.8" />
+    <MESSAGE value="version 0.1.9" />
+    <option name="LAST_COMMIT_MESSAGE" value="version 0.1.9" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/garage_architect$Opponent.coverage" NAME="Opponent Coverage Results" MODIFIED="1795513215740" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Models/Opponent" />
-    <SUITE FILE_PATH="coverage/garage_architect$main.coverage" NAME="main Coverage Results" MODIFIED="1795520393369" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/garage_architect$database.coverage" NAME="database Coverage Results" MODIFIED="1795520243945" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/DataBase" />
+    <SUITE FILE_PATH="coverage/garage_architect$main.coverage" NAME="main Coverage Results" MODIFIED="1795779131042" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/garage_architect$database.coverage" NAME="database Coverage Results" MODIFIED="1795778254498" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/DataBase" />
     <SUITE FILE_PATH="coverage/garage_architect$CarShop.coverage" NAME="CarShop Coverage Results" MODIFIED="1789744538432" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/.venv/Models/Shop" />
     <SUITE FILE_PATH="coverage/garage_architect$test.coverage" NAME="test Coverage Results" MODIFIED="1795439570801" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/garage_architect$drop_tb.coverage" NAME="drop_tb Coverage Results" MODIFIED="1795520241696" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/DataBase" />
+    <SUITE FILE_PATH="coverage/garage_architect$drop_tb.coverage" NAME="drop_tb Coverage Results" MODIFIED="1795778229231" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/DataBase" />
     <SUITE FILE_PATH="coverage/garage_architect$player.coverage" NAME="player Coverage Results" MODIFIED="1790683035584" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Models/Player" />
     <SUITE FILE_PATH="coverage/garage_architect$test_compress_numbers.coverage" NAME="test_compress_numbers Coverage Results" MODIFIED="1795439676378" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$USER_HOME$/Downloads" />
     <SUITE FILE_PATH="coverage/garage_architect$PartShop.coverage" NAME="PartShop Coverage Results" MODIFIED="1789745630620" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/.venv/Models/ShopPart" />
     <SUITE FILE_PATH="coverage/garage_architect$car.coverage" NAME="car Coverage Results" MODIFIED="1789659057748" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/.venv/Models/Car" />
     <SUITE FILE_PATH="coverage/garage_architect$part.coverage" NAME="part Coverage Results" MODIFIED="1789737295537" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/.venv/Models/Parts" />
-    <SUITE FILE_PATH="coverage/garage_architect$game.coverage" NAME="game Coverage Results" MODIFIED="1795516125761" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/garage_architect$game.coverage" NAME="game Coverage Results" MODIFIED="1795778412511" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

@@ -1,10 +1,15 @@
 class Player:
-    def __init__(self,name_player,money,wins=0):
+    def __init__(self,name_player,money,wins=0,losses=0,draws=0,rating=0,experience=0,level=1):
         self.name_player = name_player
         self.money = money
         self.list_cars=[]
         self.bought_parts=[]
         self.wins=wins
+        self.losses=losses
+        self.draws=draws
+        self.rating=rating
+        self.experience=experience
+        self.level=level
 
     def add_car(self,car):
         self.list_cars.append(car)
@@ -14,8 +19,13 @@ class Player:
 
     def print_info(self):
         print(f"Имя: {self.name_player.capitalize()}\n"
-              f"Баланс: {self.money} Сoins\n"
-              f"Победы: {self.wins}\n")
+              f"Баланс: {self.money} Coins\n"
+              f"Уровень: {self.level}\n"
+              f"Опыт: {self.experience}\n"
+              f"Рейтинг: {self.rating}\n"
+              f"Победы: {self.wins}\n"
+              f"Поражения: {self.losses}\n"
+              f"Ничьи: {self.draws}")
 
     def buy_part(self,part):
         part_found = False
@@ -105,7 +115,7 @@ class Player:
 
     def sale_part(self,part,cost):
         if part.installed:
-            print('Деталь уже усновлена\n')
+            print('Деталь уже установлена\n')
         elif not part.installed:
             self.bought_parts.remove(part)
             self.money+= cost
@@ -126,7 +136,7 @@ class Player:
             if self.money >= price:
                 self.money-=price
                 car.repair()
-                print(f'Отремантировано: {cond} очков\n'
+                print(f'Отремонтировано: {cond} очков\n'
                 f'Текущее состояние автомобиля: {car.condition}/100\n')
             else:
                 print('У вас недостаточно средств\n')
@@ -138,3 +148,10 @@ class Player:
             car.damage(points)
         else:
             print('Состояние автомобиля уже 0\n')
+
+    def check_level_up(self):
+        while self.experience>=self.level*300:
+            self.level+=1
+            self.money+=10000
+            print(f'Поздравляю вы достигли уровня: {self.level}!!!\n'
+                  f'Вы получили: +{10000} Coins\n')

@@ -60,8 +60,8 @@ class Game:
 
     def load_game(self,player_name):
         self.id_player = find_idplayer(player_name)
-        name, money,wins = load_player(self.id_player)
-        self.player = Player(name, money,wins)
+        name, money,wins,losses,draws,rating,experience,level = load_player(self.id_player)
+        self.player = Player(name, money,wins,losses,draws,rating,experience,level)
 
         parts_by_id = {}
         for id_part in load_playerpart(self.id_player):
@@ -131,7 +131,7 @@ class Game:
                 continue
             elif number == 1:
                 self.player.print_info()
-                print()
+                print(f'Доступные соперники: {len(self.get_avaliable_opponent())}\n')
                 continue
             elif number == 2:
                 self.garage_menu()
@@ -385,9 +385,9 @@ class Game:
         for i in range(len(opponents)):
             if opponents[i].difficult==1:
                 print(f'{i+1}. {opponents[i].name} - {opponents[i].car.name} - Сложность: Легкий\n')
-            elif opponents[i].difficulty==2:
+            elif opponents[i].difficult==2:
                 print(f'{i+1}. {opponents[i].name} - {opponents[i].car.name} - Сложность: Средний\n')
-            elif opponents[i].difficulty==3:
+            elif opponents[i].difficult==3:
                 print(f'{i+1}. {opponents[i].name} - {opponents[i].car.name} - Сложность: Сложный\n')
 
     def find_opponent(self,number_opponent):
@@ -425,16 +425,26 @@ class Game:
             if player_time>opponent_time:
                 print(f'Соперник {opponent.name}\n')
                 car.damage(10)
+                self.player.losses+=1
+                self.player.experience+=20
+                self.player.check_level_up()
                 self.save_game()
             elif player_time<opponent_time:
                 print('Вы\n')
                 self.player.money+=rewards[opponent.difficult]
                 print(f'Ваша награда составила: {rewards[opponent.difficult]}\n')
                 self.player.wins+=1
+                self.player.rating+=3
+                self.player.experience+=100
+                self.player.check_level_up()
                 self.save_game()
             else:
                 print('Никто. Ничья\n')
                 car.damage(5)
+                self.player.draws+=1
+                self.player.rating+=1
+                self.player.experience+=50
+                self.player.check_level_up()
                 self.save_game()
 
     def race_menu(self):

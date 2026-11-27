@@ -15,7 +15,12 @@ conn.commit()
 player_tb=('CREATE TABLE IF NOT EXISTS player(id_player integer primary key autoincrement,'
            'name text collate nocase UNIQUE,'
            'money real check(money>=0),'
-           'wins integer not null default 0 check(wins>=0))')
+           'wins integer not null default 0 check(wins>=0),'
+           'losses integer not null default 0 check(losses>=0),'
+           'draws integer not null default 0 check(draws>=0),'
+           'rating integer not null default 0 check(rating>=0),'
+           'experience integer not null default 0 check(experience>=0),'
+           'level integer not null default 1 check(level>=1))')
 c.execute(player_tb)
 conn.commit()
 car_tb=('create table if not exists cars(id_car integer primary key autoincrement,'
@@ -130,7 +135,12 @@ def load_player(id_player):
         name=player[1]
         money=player[2]
         wins=player[3]
-        return name,money,wins
+        losses=player[4]
+        draws=player[5]
+        rating=player[6]
+        experience=player[7]
+        level=player[8]
+        return name,money,wins,losses,draws,rating,experience,level
     else:
         raise ValueError(f'Игрок с id: {id_player} не найден')
 
@@ -193,8 +203,26 @@ def find_playercar(id_player):
 def update_player(id_player,alex,car=None):
     try:
         if car is not None:
-            string='update player set name=?,money=?,wins=? where id_player=?'
-            c.execute(string,(alex.name_player,alex.money,id_player,alex.wins))
+            string=('update player set name=?,'
+                    'money=?,'
+                    'wins=?,'
+                    'losses=?,'
+                    'draws=?,'
+                    'rating=?,'
+                    'experience=?,'
+                    'level=?'
+                    ' where id_player=?')
+            c.execute(string,(
+                alex.name_player,
+                alex.money,
+                alex.wins,
+                alex.losses,
+                alex.draws,
+                alex.rating,
+                alex.experience,
+                alex.level,
+                id_player
+            ))
             if c.rowcount == 0:
                 conn.rollback()
                 print(f'Игрок с именем: {alex.name_player} не найден, обновление не выполнено')
@@ -208,8 +236,26 @@ def update_player(id_player,alex,car=None):
             conn.commit()
             return True
         else:
-            string = 'update player set name=?,money=? where id_player=?'
-            c.execute(string, (alex.name_player, alex.money, id_player))
+            string = ('update player set name=?,'
+                      'money=?,'
+                      'wins=?,'
+                      'losses=?,'
+                      'draws=?,'
+                      'rating=?,'
+                      'experience=?,'
+                      'level=?'
+                      ' where id_player=?')
+            c.execute(string, (
+                alex.name_player,
+                alex.money,
+                alex.wins,
+                alex.losses,
+                alex.draws,
+                alex.rating,
+                alex.experience,
+                alex.level,
+                id_player
+            ))
             if c.rowcount == 0:
                 conn.rollback()
                 print(f'Игрок с именем: {alex.name_player} не найден, обновление не выполнено')
